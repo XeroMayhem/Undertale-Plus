@@ -42,6 +42,8 @@ function dialogue:create(text)
     dialogue.text = text--{"* This is the 1st page!", "* This is the 2nd page!", "* This is the 3rd page!\n* LINE BREAK LETS GO!!!!!!!"}
     dialogue.page = 1
     dialogue.pageNum = #dialogue.text
+    dialogue.boxX = camx +((320 -dialogue.boxWidth)/2) *gameScale
+    dialogue.boxY = camy +148 *gameScale
 
     for p = 1, dialogue.pageNum do
         dialogue.text_length[p] = string.len(dialogue.text[p])
@@ -49,9 +51,6 @@ function dialogue:create(text)
 end
 
 function dialogue:update()
-    dialogue.boxX = ((320 -dialogue.boxWidth)/2) *gameScale
-    dialogue.boxY = 148 *gameScale
-
     dialogue.draw_char = dialogue.draw_char +dialogue.text_spd
 end
 

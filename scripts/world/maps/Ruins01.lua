@@ -10,7 +10,7 @@ return {
   tilewidth = 20,
   tileheight = 20,
   nextlayerid = 20,
-  nextobjectid = 76,
+  nextobjectid = 81,
   properties = {},
   tilesets = {
     {
@@ -346,7 +346,7 @@ return {
       objects = {
         {
           id = 68,
-          name = "transition",
+          name = "transition_1",
           type = "",
           shape = "rectangle",
           x = 180,
@@ -362,7 +362,7 @@ return {
         },
         {
           id = 73,
-          name = "npc_noelle01",
+          name = "npc_noelle03",
           type = "",
           shape = "point",
           x = 160,
@@ -372,7 +372,7 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["script"] = "noelle01",
+            ["script"] = "noelle03",
             ["sprite"] = "Noelle.png"
           }
         },
@@ -389,6 +389,22 @@ return {
           visible = true,
           properties = {
             ["text"] = "* Vines block the path.\n* If only you could cut them."
+          }
+        },
+        {
+          id = 77,
+          name = "transition_2",
+          type = "",
+          shape = "rectangle",
+          x = 0,
+          y = 140,
+          width = 20,
+          height = 40,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["map"] = "Ruins02",
+            ["marker"] = "entry_right"
           }
         }
       }
@@ -414,6 +430,19 @@ return {
           shape = "point",
           x = 200,
           y = 200,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 78,
+          name = "left_entry",
+          type = "",
+          shape = "point",
+          x = 40,
+          y = 160,
           width = 0,
           height = 0,
           rotation = 0,

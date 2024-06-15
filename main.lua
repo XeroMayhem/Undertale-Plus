@@ -15,10 +15,10 @@ local function key_load()
                             local event = require(script)
                             local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
                             npc:onInteract()
-                        elseif obj.name == "sign" then
+                        elseif string.sub(obj.name, 1, 4) == "sign" then
                             local event = require 'scripts/sign'
                             event:onInteract()
-                        elseif obj.name == "transition" then
+                        elseif string.sub(obj.name, 1, 10) == "transition" then
                             local script = 'scripts/transition'
                             local event = require(script)
                         else
@@ -54,7 +54,7 @@ function love.load()
     modPath = 'mods/testmod/'
 ]]
     Event = require 'scripts.events'
-
+    
     map_sprite = require 'scripts.map_sprite'
     instance = require 'scripts.object'
 
@@ -96,12 +96,18 @@ function love.load()
     bgMusic = music.ruins
     bgMusic:setLooping(true)
 
+
+
     overworld = {}
     overworld.objects = {}
     overworld.scripts = require 'scripts.overworld_scripts'
 
     player = require 'scripts.player'
     player:load()
+
+    camx = 0
+    camy = 0
+    camf = player
 
     walls = {}
     if gameMap.layers["Markers"] then
@@ -129,7 +135,7 @@ function love.load()
             interactable:setType('static')
             interactable:setCollisionClass('interactable')
             interactable.id = obj.id
-            if obj.name == "transition" then
+            if string.sub(obj.name, 1, 10) == "transition" then
                 interactable:setCollisionClass('transition')
             elseif string.sub(obj.name, 1, 3) == "npc" then
                 local event = require ('scripts.npc')
@@ -193,7 +199,7 @@ function love.update(dt)
 
         if #colliders > 0 then
             for i, obj in pairs(gameMap.layers["Objects"].objects) do
-                if string.sub(obj.name, 1, 10) == "transition" and cutsceneReady == true then
+                if obj.id == colliders[1].id and cutsceneReady == true then
                     TransitionIsActive = true
                     curTransition = obj
                     playerFree = false
@@ -205,13 +211,23 @@ function love.update(dt)
 
     else
         player.anim:gotoFrame(2)
-        player.collider:setLinearVelocity(0, 0)
 
         if cutsceneActive == true then
             curCutscene:update()
         end
 
     end
+
+    if camf.x > 160 *gameScale then
+        camx = camf.x - (160 *gameScale)
+    end
+
+    if camf.y > 120 *gameScale then
+        camy = camf.y - (120 *gameScale)
+    end
+
+    camx = math.min(camx, (gameMap.width  *gameMap.tilewidth *gameScale) -(320*gameScale))
+    camy = math.min(camy, (gameMap.height  *gameMap.tileheight *gameScale) -(240*gameScale))
 
     if Textbox.isActive == true then
         Textbox:update()
@@ -220,7 +236,10 @@ function love.update(dt)
 end
 
 function love.draw()
-    gameMap:draw(nil, nil, gameScale, gameScale)
+
+    love.graphics.translate(-camx, -camy)
+
+    gameMap:draw(-camx/2, nil, gameScale, gameScale)
     
     local objects = {}
     for i=1, #overworld.objects do
@@ -232,7 +251,8 @@ function love.draw()
         obj[2]:draw()
    end
    --world:draw()
-
+   love.graphics.translate(0, 0)
+   
     if cutsceneActive == true then
         curCutscene:draw()
     end
@@ -264,7 +284,7 @@ function love.draw()
             playerFree = true
         end
         love.graphics.setColor(0, 0, 0, TransitionAlpha)
-        love.graphics.rectangle("fill", 0, 0, 640, 480)
+        love.graphics.rectangle("fill", camx, camy, 640, 480)
         love.graphics.setColor(255, 255, 255, 1)
     end
 

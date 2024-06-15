@@ -15,7 +15,7 @@ function player:load()
     player.collider = world:newRectangleCollider(player.x, player.y, 19 *gameScale, 29/2 *gameScale)
     player.collider:setFixedRotation(true)
     player.collider:setCollisionClass('player')
-    player.speed = 150
+    player.speed = 2
     player.spriteSheet = love.graphics.newImage('assets/sprites/player/Walk-Sheet.png')
     player.grid = anim8.newGrid(20, 30, 80, 93)
 
@@ -58,12 +58,12 @@ function player:update(dt)
         isMoving = true
     end
 
-    player.collider:setLinearVelocity(vx, vy)
+    player.collider:setPosition(player.collider:getX() +vx, player.collider:getY() +vy)
 
     if isMoving == false then
        player.anim:gotoFrame(2)
     end
-    
+
     player.x = player.collider:getX() -(10 * gameScale)
     player.y = player.collider:getY() -(15 * gameScale) -(29/4 *gameScale)
     player.depth = -player.collider:getY()

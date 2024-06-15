@@ -47,7 +47,7 @@ function transition:transition(marker, map)
             interactable:setType('static')
             interactable:setCollisionClass('interactable')
             interactable.id = obj.id
-            if obj.name == "transition" then
+            if string.sub(obj.name, 1, 10) == "transition" then
                 interactable:setCollisionClass('transition')
             elseif string.sub(obj.name, 1, 3) == "npc" then
                 local event = require ('scripts.npc')
