@@ -388,7 +388,7 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["text"] = "* There appears to be a crack in the wall."
+            ["text"] = "[\"* There appears to be a crack in the wall.\", \"* I wonder what caused it.\"]"
           }
         },
         {

@@ -9,8 +9,8 @@ return {
   height = 12,
   tilewidth = 20,
   tileheight = 20,
-  nextlayerid = 19,
-  nextobjectid = 74,
+  nextlayerid = 20,
+  nextobjectid = 76,
   properties = {},
   tilesets = {
     {
@@ -190,9 +190,9 @@ return {
       properties = {},
       encoding = "lua",
       data = {
-        152, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
+        152, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 94, 95, 96, 0, 142,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 94, 95, 96, 0, 142,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 94, 94, 96, 0, 142,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
@@ -202,6 +202,38 @@ return {
         136, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
         16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
         38, 7, 7, 7, 7, 7, 7, 7, 136, 0, 0, 134, 7, 7, 7, 39
+      }
+    },
+    {
+      type = "tilelayer",
+      x = 0,
+      y = 0,
+      width = 16,
+      height = 12,
+      id = 19,
+      name = "Tile Layer 6",
+      class = "",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
+      properties = {},
+      encoding = "lua",
+      data = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 90, 90, 90, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       }
     },
     {
@@ -232,26 +264,13 @@ return {
           properties = {}
         },
         {
-          id = 58,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 260,
-          y = 0,
-          width = 40,
-          height = 60,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
           id = 59,
           name = "",
           type = "",
           shape = "rectangle",
           x = 80,
           y = 0,
-          width = 140,
+          width = 220,
           height = 60,
           rotation = 0,
           visible = true,
@@ -355,6 +374,21 @@ return {
           properties = {
             ["script"] = "noelle01",
             ["sprite"] = "Noelle.png"
+          }
+        },
+        {
+          id = 74,
+          name = "sign",
+          type = "",
+          shape = "rectangle",
+          x = 220,
+          y = 40,
+          width = 40,
+          height = 20,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["text"] = "* Vines block the path.\n* If only you could cut them."
           }
         }
       }

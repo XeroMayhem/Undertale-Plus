@@ -125,7 +125,7 @@
   </object>
   <object id="58" name="sign" x="260" y="80">
    <properties>
-    <property name="text" value="* There appears to be a crack in the wall."/>
+    <property name="text" value="[&quot;* There appears to be a crack in the wall.&quot;, &quot;* I wonder what caused it.&quot;]"/>
    </properties>
    <point/>
   </object>

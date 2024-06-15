@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="20" tileheight="20" infinite="0" nextlayerid="19" nextobjectid="74">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="20" tileheight="20" infinite="0" nextlayerid="20" nextobjectid="76">
  <editorsettings>
   <export target="Ruins01.lua" format="lua"/>
  </editorsettings>
@@ -70,9 +70,9 @@
  </layer>
  <layer id="17" name="Ceiling" width="16" height="12">
   <data encoding="csv">
-152,0,0,0,0,0,0,0,0,0,0,0,0,0,0,142,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,142,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,142,
+152,0,0,0,0,0,0,0,0,0,93,94,95,96,0,142,
+0,0,0,0,0,0,0,0,0,0,93,94,95,96,0,142,
+0,0,0,0,0,0,0,0,0,0,93,94,94,96,0,142,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,142,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,142,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,142,
@@ -84,10 +84,25 @@
 38,7,7,7,7,7,7,7,136,0,0,134,7,7,7,39
 </data>
  </layer>
+ <layer id="19" name="Tile Layer 6" width="16" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,90,90,90,90,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
  <objectgroup color="#0000ff" id="11" name="Collision">
   <object id="55" x="300" y="60" width="20" height="160"/>
-  <object id="58" x="260" y="0" width="40" height="60"/>
-  <object id="59" x="80" y="0" width="140" height="60"/>
+  <object id="59" x="80" y="0" width="220" height="60"/>
   <object id="61" x="20" y="220" width="160" height="20"/>
   <object id="62" x="220" y="220" width="80" height="20"/>
   <object id="64" x="0" y="180" width="80" height="40"/>
@@ -106,6 +121,12 @@
     <property name="sprite" value="Noelle.png"/>
    </properties>
    <point/>
+  </object>
+  <object id="74" name="sign" x="220" y="40" width="40" height="20">
+   <properties>
+    <property name="text">* Vines block the path.
+* If only you could cut them.</property>
+   </properties>
   </object>
  </objectgroup>
  <objectgroup color="#7f00ff" id="18" name="Markers">
