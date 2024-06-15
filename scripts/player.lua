@@ -22,6 +22,7 @@ function player:load()
     player.animations = {}
     player.animations.down = anim8.newAnimation(player.grid('1-4', 1), 0.25)
     player.animations.left = anim8.newAnimation(player.grid('1-2', 2), 0.25)
+    player.animations.left = anim8.newAnimation(player.grid('1-2', 2), 0.25)
     player.animations.right = anim8.newAnimation(player.grid('3-4', 2), 0.25)
     player.animations.up = anim8.newAnimation(player.grid('1-4', 3), 0.25)
 

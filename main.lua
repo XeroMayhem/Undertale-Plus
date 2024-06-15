@@ -200,6 +200,7 @@ function love.update(dt)
 
     else
         player.anim:gotoFrame(2)
+        player.collider:setLinearVelocity(0, 0)
 
         if cutsceneActive == true then
             curCutscene:update()
