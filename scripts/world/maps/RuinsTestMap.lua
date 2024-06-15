@@ -9,8 +9,8 @@ return {
   height = 12,
   tilewidth = 20,
   tileheight = 20,
-  nextlayerid = 14,
-  nextobjectid = 48,
+  nextlayerid = 16,
+  nextobjectid = 80,
   properties = {},
   tilesets = {
     {
@@ -270,7 +270,7 @@ return {
           shape = "rectangle",
           x = 20,
           y = 220,
-          width = 300,
+          width = 280,
           height = 20,
           rotation = 0,
           visible = true,
@@ -282,9 +282,9 @@ return {
           type = "",
           shape = "rectangle",
           x = 300,
-          y = 40,
+          y = 80,
           width = 20,
-          height = 180,
+          height = 140,
           rotation = 0,
           visible = true,
           properties = {}
@@ -371,21 +371,6 @@ return {
           properties = {}
         },
         {
-          id = 41,
-          name = "sign",
-          type = "",
-          shape = "rectangle",
-          x = 140,
-          y = 120,
-          width = 40,
-          height = 20,
-          rotation = 0,
-          visible = true,
-          properties = {
-            ["text"] = "* Hey there!"
-          }
-        },
-        {
           id = 42,
           name = "npc_noelle01",
           type = "",
@@ -414,7 +399,38 @@ return {
           visible = true,
           properties = {
             ["script"] = "noelle02",
-            ["sprite"] = "Noelle.png"
+            ["sprite"] = "Noelle Inverted.png"
+          }
+        },
+        {
+          id = 58,
+          name = "sign",
+          type = "",
+          shape = "point",
+          x = 140,
+          y = 120,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["text"] = "* Hey there!"
+          }
+        },
+        {
+          id = 79,
+          name = "transition",
+          type = "",
+          shape = "rectangle",
+          x = 140,
+          y = 60,
+          width = 40,
+          height = 20,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["map"] = "Ruins01",
+            ["marker"] = "down_entry"
           }
         }
       }
@@ -434,14 +450,56 @@ return {
       properties = {},
       objects = {
         {
-          id = 34,
+          id = 50,
           name = "squeak",
           type = "",
           shape = "rectangle",
-          x = 140,
-          y = 60,
+          x = 260,
+          y = 200,
           width = 40,
           height = 20,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      draworder = "topdown",
+      id = 14,
+      name = "Markers",
+      class = "",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
+      properties = {},
+      objects = {
+        {
+          id = 55,
+          name = "spawn",
+          type = "",
+          shape = "point",
+          x = 80,
+          y = 140,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 57,
+          name = "down_entry",
+          type = "",
+          shape = "point",
+          x = 160,
+          y = 100,
+          width = 0,
+          height = 0,
           rotation = 0,
           visible = true,
           properties = {}

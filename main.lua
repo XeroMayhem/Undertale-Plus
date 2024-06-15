@@ -11,11 +11,14 @@ local function key_load()
                 for i, obj in pairs(gameMap.layers["Objects"].objects) do
                     if obj.id == colliders[1].id then
                         if string.sub(obj.name, 1, 3) == "npc" then
-                            local script = 'scripts/world/events/npc'
+                            local script = 'scripts/npc'
                             local event = require(script)
                             local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
                             npc:onInteract()
-
+                        elseif obj.name == "transition" then
+                            local script = 'scripts/transition'
+                            local event = require(script)
+                            
                         else
                             local script = 'scripts/world/events/' ..obj.name
                             local event = require(script)
@@ -36,7 +39,17 @@ end
 function love.load()
 
     gameScale = 2
-
+    --[[ load mods
+    local open = io.open
+    local file = open("mods/testmod/mod.json", "rb")
+    if not file then return nil end
+    local jsonString = file:read "*a"
+    file:close()
+    
+    json = require 'libraries.json'
+    modFile = json.decode(jsonString)
+    modPath = 'mods/testmod/'
+]]
     Event = require 'scripts.events'
 
     map_sprite = require 'scripts.map_sprite'
@@ -53,6 +66,7 @@ function love.load()
     world = wf.newWorld(0, 0)
     world:addCollisionClass('player')
     world:addCollisionClass('interactable', {ignores = {'player'}})
+    world:addCollisionClass('transition', {ignores = {'player'}})
     world:addCollisionClass('cutscene', {ignores = {'player'}})
 
     love.window.setTitle("Undertale+")
@@ -62,12 +76,16 @@ function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
 
     sti = require 'libraries/sti'
-    gameMap = sti('scripts/world/maps/RuinsTestMap.lua')
+    gameMap = sti('scripts/world/maps/RuinsTestMap.lua')--sti(modPath ..'scripts/world/maps/' .. modFile.map ..'.lua') --Load Mod Map
     
     playerFree = true
 
     cutsceneActive = false
     cutsceneReady = true
+    TransitionIsActive = false
+    TransitionAlpha = 0
+    TransitionMultiplier = 1
+    curTransition = nil
 
     music = {}
     music.ruins = love.audio.newSource('assets/music/ruins.mp3', "stream")
@@ -83,6 +101,10 @@ function love.load()
     player:load()
 
     walls = {}
+    if gameMap.layers["Markers"] then
+        gameMap.layers["Markers"].visible = false
+    end
+
     if gameMap.layers["Collision"] then
         for i, obj in pairs(gameMap.layers["Collision"].objects) do
             local wall = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
@@ -104,8 +126,10 @@ function love.load()
             interactable:setType('static')
             interactable:setCollisionClass('interactable')
             interactable.id = obj.id
-            if string.sub(obj.name, 1, 3) == "npc" then
-                local event = require ('scripts.world.events.npc')
+            if obj.name == "transition" then
+                interactable:setCollisionClass('transition')
+            elseif string.sub(obj.name, 1, 3) == "npc" then
+                local event = require ('scripts.npc')
                 local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
                 npc:init()
             else
@@ -137,6 +161,8 @@ end
 
 function love.update(dt)
 
+    world:update(dt)
+
     if playerFree == true then
 
         player:update(dt)
@@ -158,7 +184,20 @@ function love.update(dt)
             cutsceneReady = true
         end
 
+        colliders = world:queryCircleArea(px, py, 20, {'transition'})
+
+        if #colliders > 0 then
+            for i, obj in pairs(gameMap.layers["Objects"].objects) do
+                if string.sub(obj.name, 1, 10) == "transition" and cutsceneReady == true then
+                    TransitionIsActive = true
+                    curTransition = obj
+                    playerFree = false
+                end
+            end
+        end
+
         colliders = {}
+
     else
         player.anim:gotoFrame(2)
 
@@ -168,7 +207,6 @@ function love.update(dt)
 
     end
 
-    world:update(dt)
     if Textbox.isActive == true then
         Textbox:update()
     end
@@ -195,6 +233,33 @@ function love.draw()
 
     if Textbox.isActive == true then
         Textbox:draw()
+    end
+    
+    if TransitionIsActive == true then
+        TransitionAlpha = TransitionAlpha +((1/10) *TransitionMultiplier)
+        if TransitionAlpha >= 1 then
+            TransitionMultiplier = -1
+            local script = 'scripts/transition'
+            world:destroy()
+            world = wf.newWorld(0, 0)
+            world:addCollisionClass('player')
+            world:addCollisionClass('interactable', {ignores = {'player'}})
+            world:addCollisionClass('transition', {ignores = {'player'}})
+            world:addCollisionClass('cutscene', {ignores = {'player'}})
+            curCutscene = require(script)
+            curCutscene:transition(gameMap:getObjectProperties("Objects", curTransition.name).marker, gameMap:getObjectProperties("Objects", curTransition.name).map)
+            playerFree = true
+        end
+        if TransitionMultiplier == -1 and TransitionAlpha <= 0 then
+            TransitionIsActive = false
+            TransitionAlpha = 0
+            TransitionMultiplier = 1
+            curTransition = nil
+            playerFree = true
+        end
+        love.graphics.setColor(0, 0, 0, TransitionAlpha)
+        love.graphics.rectangle("fill", 0, 0, 640, 480)
+        love.graphics.setColor(255, 255, 255, 1)
     end
 
 end

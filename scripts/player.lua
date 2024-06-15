@@ -3,8 +3,16 @@ local player = {}
 function player:load()
     player.x = 160
     player.y = 120
+    if gameMap.layers["Markers"] then
+        for i, obj in pairs(gameMap.layers["Markers"].objects) do
+            if obj.name == "spawn" then
+                player.x = obj.x *2
+                player.y = obj.y *2
+            end
+        end
+    end
     player.depth = -player.y
-    player.collider = world:newRectangleCollider(200, 200, 19 *gameScale, 29/2 *gameScale)
+    player.collider = world:newRectangleCollider(player.x, player.y, 19 *gameScale, 29/2 *gameScale)
     player.collider:setFixedRotation(true)
     player.collider:setCollisionClass('player')
     player.speed = 150
