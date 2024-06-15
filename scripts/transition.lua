@@ -53,6 +53,8 @@ function transition:transition(marker, map)
                 local event = require ('scripts.npc')
                 local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
                 npc:init()
+            elseif string.sub(obj.name, 1, 4) == "sign" then
+
             else
                 local script = 'scripts/world/events/' ..obj.name
                 local event = require(script)

@@ -15,10 +15,12 @@ local function key_load()
                             local event = require(script)
                             local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
                             npc:onInteract()
+                        elseif obj.name == "sign" then
+                            local event = require 'scripts/sign'
+                            event:onInteract()
                         elseif obj.name == "transition" then
                             local script = 'scripts/transition'
                             local event = require(script)
-                            
                         else
                             local script = 'scripts/world/events/' ..obj.name
                             local event = require(script)
@@ -39,6 +41,8 @@ end
 function love.load()
 
     gameScale = 2
+
+    json = require 'libraries.json'
     --[[ load mods
     local open = io.open
     local file = open("mods/testmod/mod.json", "rb")
@@ -46,7 +50,6 @@ function love.load()
     local jsonString = file:read "*a"
     file:close()
     
-    json = require 'libraries.json'
     modFile = json.decode(jsonString)
     modPath = 'mods/testmod/'
 ]]
@@ -132,6 +135,8 @@ function love.load()
                 local event = require ('scripts.npc')
                 local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
                 npc:init()
+            elseif string.sub(obj.name, 1, 4) == "sign" then
+
             else
                 local event = require ('scripts.world.events.' ..obj.name)
                 event:init()
@@ -226,7 +231,7 @@ function love.draw()
     for i, obj in ipairs(objects) do
         obj[2]:draw()
    end
-   --world:draw(1)
+   --world:draw()
 
     if cutsceneActive == true then
         curCutscene:draw()

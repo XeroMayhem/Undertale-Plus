@@ -10,7 +10,7 @@ return {
   tilewidth = 20,
   tileheight = 20,
   nextlayerid = 16,
-  nextobjectid = 80,
+  nextobjectid = 81,
   properties = {},
   tilesets = {
     {
@@ -345,32 +345,6 @@ return {
       properties = {},
       objects = {
         {
-          id = 28,
-          name = "crack",
-          type = "",
-          shape = "point",
-          x = 80,
-          y = 100,
-          width = 0,
-          height = 0,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 39,
-          name = "squeak",
-          type = "",
-          shape = "rectangle",
-          x = 240,
-          y = 60,
-          width = 40,
-          height = 20,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
           id = 42,
           name = "npc_noelle01",
           type = "",
@@ -407,14 +381,14 @@ return {
           name = "sign",
           type = "",
           shape = "point",
-          x = 140,
-          y = 120,
+          x = 260,
+          y = 80,
           width = 0,
           height = 0,
           rotation = 0,
           visible = true,
           properties = {
-            ["text"] = "* Hey there!"
+            ["text"] = "* There appears to be a crack in the wall."
           }
         },
         {
@@ -448,21 +422,7 @@ return {
       parallaxx = 1,
       parallaxy = 1,
       properties = {},
-      objects = {
-        {
-          id = 50,
-          name = "squeak",
-          type = "",
-          shape = "rectangle",
-          x = 260,
-          y = 200,
-          width = 40,
-          height = 20,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        }
-      }
+      objects = {}
     },
     {
       type = "objectgroup",

@@ -10,7 +10,7 @@ return {
   tilewidth = 20,
   tileheight = 20,
   nextlayerid = 19,
-  nextobjectid = 73,
+  nextobjectid = 74,
   properties = {},
   tilesets = {
     {
@@ -342,18 +342,19 @@ return {
           }
         },
         {
-          id = 72,
-          name = "sign",
+          id = 73,
+          name = "npc_noelle01",
           type = "",
           shape = "point",
-          x = 80,
+          x = 160,
           y = 140,
           width = 0,
           height = 0,
           rotation = 0,
           visible = true,
           properties = {
-            ["text"] = "* TURN BACK NOW"
+            ["script"] = "noelle01",
+            ["sprite"] = "Noelle.png"
           }
         }
       }

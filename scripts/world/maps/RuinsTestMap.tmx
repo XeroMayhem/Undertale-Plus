@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="20" tileheight="20" infinite="0" nextlayerid="16" nextobjectid="80">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="20" tileheight="20" infinite="0" nextlayerid="16" nextobjectid="81">
  <editorsettings>
   <export target="RuinsTestMap.lua" format="lua"/>
  </editorsettings>
@@ -109,10 +109,6 @@
   <object id="13" x="140" y="20" width="40" height="20"/>
  </objectgroup>
  <objectgroup color="#ff00ff" id="12" name="Objects">
-  <object id="28" name="crack" x="80" y="100">
-   <point/>
-  </object>
-  <object id="39" name="squeak" x="240" y="60" width="40" height="20"/>
   <object id="42" name="npc_noelle01" x="240" y="140">
    <properties>
     <property name="script" value="noelle01"/>
@@ -127,9 +123,9 @@
    </properties>
    <point/>
   </object>
-  <object id="58" name="sign" x="140" y="120">
+  <object id="58" name="sign" x="260" y="80">
    <properties>
-    <property name="text" value="* Hey there!"/>
+    <property name="text" value="* There appears to be a crack in the wall."/>
    </properties>
    <point/>
   </object>
@@ -140,9 +136,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#ff00ff" id="13" name="Cutscene">
-  <object id="50" name="squeak" x="260" y="200" width="40" height="20"/>
- </objectgroup>
+ <objectgroup color="#ff00ff" id="13" name="Cutscene"/>
  <objectgroup color="#7f00ff" id="14" name="Markers">
   <object id="55" name="spawn" x="80" y="140">
    <point/>
