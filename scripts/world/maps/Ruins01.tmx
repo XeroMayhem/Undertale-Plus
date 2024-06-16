@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="20" tileheight="20" infinite="0" nextlayerid="20" nextobjectid="81">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="20" tileheight="20" infinite="0" nextlayerid="20" nextobjectid="82">
  <editorsettings>
   <export target="Ruins01.lua" format="lua"/>
  </editorsettings>
@@ -122,16 +122,16 @@
    </properties>
    <point/>
   </object>
-  <object id="74" name="sign" x="220" y="40" width="40" height="20">
-   <properties>
-    <property name="text">* Vines block the path.
-* If only you could cut them.</property>
-   </properties>
-  </object>
   <object id="77" name="transition_2" x="0" y="140" width="20" height="40">
    <properties>
     <property name="map" value="Ruins02"/>
     <property name="marker" value="entry_right"/>
+   </properties>
+  </object>
+  <object id="81" name="sign" x="220" y="60" width="40" height="20">
+   <properties>
+    <property name="text">* Vines block the path.
+* If only you could cut them.</property>
    </properties>
   </object>
  </objectgroup>

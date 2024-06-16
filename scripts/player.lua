@@ -12,7 +12,9 @@ function player:load()
         end
     end
     player.depth = -player.y
-    player.collider = world:newRectangleCollider(player.x, player.y, 19 *gameScale, 29/2 *gameScale)
+    player.width = 19 *gameScale
+    player.height = 29/2 *gameScale
+    player.collider = world:newRectangleCollider(player.x, player.y, player.width, player.height)
     player.collider:setFixedRotation(true)
     player.collider:setCollisionClass('player')
     player.speed = 2
@@ -53,12 +55,20 @@ function player:update(dt)
         isMoving = true
     end
     if love.keyboard.isDown("down") then
-        vy = vy +player.speed
+        vy = player.speed
         player.anim = player.animations.down
         isMoving = true
     end
 
-    player.collider:setPosition(player.collider:getX() +vx, player.collider:getY() +vy)
+    if #world:queryRectangleArea(player.collider:getX() +(player.width/2 *(vx/player.speed)), player.collider:getY() -(player.height/2), vx, player.height, {'wall', 'instance'}) == 0 then
+        player.collider:setX(player.collider:getX() +vx)
+    end
+    print(#world:queryRectangleArea(player.collider:getX() +(player.width/2 *(vx/player.speed)), player.collider:getY() -(player.height/2), vx, player.height, {'wall', 'instance'}))
+
+    if #world:queryRectangleArea(player.collider:getX() -(player.width/2), player.collider:getY() +(player.height/2 *(vy/player.speed)), player.width, vy, {'wall', 'instance'}) == 0 then
+        player.collider:setY(player.collider:getY() +vy)
+    end
+    print(#world:queryRectangleArea(player.collider:getX() -(player.width/2), player.collider:getY() +(player.height/2 *(vy/player.speed)), player.width, vy, {'wall', 'instance'}))
 
     if isMoving == false then
        player.anim:gotoFrame(2)

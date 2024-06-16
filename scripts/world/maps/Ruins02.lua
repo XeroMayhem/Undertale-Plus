@@ -10,7 +10,7 @@ return {
   tilewidth = 20,
   tileheight = 20,
   nextlayerid = 9,
-  nextobjectid = 20,
+  nextobjectid = 21,
   properties = {},
   tilesets = {
     {
@@ -350,7 +350,7 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["script"] = "froggit01",
+            ["script"] = "froggit03",
             ["sprite"] = "Froggit.png"
           }
         },
@@ -425,6 +425,19 @@ return {
           shape = "point",
           x = 600,
           y = 160,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 20,
+          name = "spawn",
+          type = "",
+          shape = "point",
+          x = 320,
+          y = 140,
           width = 0,
           height = 0,
           rotation = 0,

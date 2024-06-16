@@ -68,6 +68,8 @@ function love.load()
     wf = require 'libraries/windfield'
     world = wf.newWorld(0, 0)
     world:addCollisionClass('player')
+    world:addCollisionClass('wall')
+    world:addCollisionClass('instance')
     world:addCollisionClass('interactable', {ignores = {'player'}})
     world:addCollisionClass('transition', {ignores = {'player'}})
     world:addCollisionClass('cutscene', {ignores = {'player'}})
@@ -79,7 +81,8 @@ function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
 
     sti = require 'libraries/sti'
-    gameMap = sti('scripts/world/maps/RuinsTestMap.lua')--sti(modPath ..'scripts/world/maps/' .. modFile.map ..'.lua') --Load Mod Map
+    local map = 'RuinsTestMap'
+    gameMap = sti('scripts/world/maps/'.. map..'.lua')--sti(modPath ..'scripts/world/maps/' .. modFile.map ..'.lua') --Load Mod Map
     
     playerFree = true
 
@@ -118,6 +121,7 @@ function love.load()
         for i, obj in pairs(gameMap.layers["Collision"].objects) do
             local wall = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
             wall:setType('static')
+            wall:setCollisionClass('wall')
             table.insert(walls, wall)
         end
         gameMap.layers["Collision"].visible = false
@@ -250,7 +254,10 @@ function love.draw()
     for i, obj in ipairs(objects) do
         obj[2]:draw()
    end
-   --world:draw()
+
+   world:draw()
+   world:setQueryDebugDrawing(true)
+
    love.graphics.translate(0, 0)
    
     if cutsceneActive == true then
@@ -269,6 +276,8 @@ function love.draw()
             world:destroy()
             world = wf.newWorld(0, 0)
             world:addCollisionClass('player')
+            world:addCollisionClass('wall')
+            world:addCollisionClass('instance')
             world:addCollisionClass('interactable', {ignores = {'player'}})
             world:addCollisionClass('transition', {ignores = {'player'}})
             world:addCollisionClass('cutscene', {ignores = {'player'}})

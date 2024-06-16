@@ -9,6 +9,7 @@ function inst:create(x, y, sprite, depth, maskwidth, maskheight, xoffset, yoffse
     Object.sprite = love.graphics.newImage(sprite)
     
     Object.collider = world:newRectangleCollider(x +xoffset, y +yoffset, maskwidth *gameScale, maskheight *gameScale)
+    Object.collider:setCollisionClass('instance')
     Object.collider:setType('static')
     
     Object.x = Object.collider:getX()/gameScale +(xoffset)

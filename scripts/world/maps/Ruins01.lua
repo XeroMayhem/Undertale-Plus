@@ -10,7 +10,7 @@ return {
   tilewidth = 20,
   tileheight = 20,
   nextlayerid = 20,
-  nextobjectid = 81,
+  nextobjectid = 82,
   properties = {},
   tilesets = {
     {
@@ -377,21 +377,6 @@ return {
           }
         },
         {
-          id = 74,
-          name = "sign",
-          type = "",
-          shape = "rectangle",
-          x = 220,
-          y = 40,
-          width = 40,
-          height = 20,
-          rotation = 0,
-          visible = true,
-          properties = {
-            ["text"] = "* Vines block the path.\n* If only you could cut them."
-          }
-        },
-        {
           id = 77,
           name = "transition_2",
           type = "",
@@ -405,6 +390,21 @@ return {
           properties = {
             ["map"] = "Ruins02",
             ["marker"] = "entry_right"
+          }
+        },
+        {
+          id = 81,
+          name = "sign",
+          type = "",
+          shape = "rectangle",
+          x = 220,
+          y = 60,
+          width = 40,
+          height = 20,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["text"] = "* Vines block the path.\n* If only you could cut them."
           }
         }
       }

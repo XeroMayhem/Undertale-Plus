@@ -30,6 +30,7 @@ function transition:transition(marker, map)
         for i, obj in pairs(gameMap.layers["Collision"].objects) do
             local wall = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
             wall:setType('static')
+            wall:setCollisionClass('wall')
             table.insert(walls, wall)
         end
         gameMap.layers["Collision"].visible = false
