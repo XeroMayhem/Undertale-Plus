@@ -404,7 +404,7 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["text"] = "* Vines block the path.\n* If only you could cut them."
+            ["text"] = "* Vines block the path.^* If only you could cut them."
           }
         }
       }

@@ -43,6 +43,7 @@ end
 function love.load()
 
     gameScale = 2
+    love.audio.setVolume(1)
 
     json = require 'libraries.json'
     --[[ load mods
@@ -96,7 +97,7 @@ function love.load()
     curTransition = nil
 
     music = {}
-    music.ruins = love.audio.newSource('assets/music/ruins.mp3', "stream")
+    music.ruins = love.audio.newSource('assets/music/mus_ruins.ogg', "stream")
 
     bgMusic = music.ruins
     bgMusic:setLooping(true)

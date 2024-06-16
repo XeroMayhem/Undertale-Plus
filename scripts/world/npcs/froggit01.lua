@@ -2,15 +2,15 @@ local npc = {}
 
 function npc:onInteract()
     local px = player.x/gameScale
-    local text = {"* Ribbit Ribbit."}
+    Textbox:create()
     if px < 210 then
-        text = {"* ...", "* Meow."}
+        Textbox:pageParams("* ...")
+        Textbox:pageParams("* Meow.")
     elseif px < 420 then
-        text = {"* Rib Ribbit."}
+        Textbox:pageParams("* Rib Ribbit.")
     else
-        text = {"* Ribbit Ribbit."}
+        Textbox:pageParams("* Ribbit Ribbit.")
     end
-    Textbox:create(text)
 end
 
 return npc
