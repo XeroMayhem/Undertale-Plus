@@ -17,7 +17,9 @@ function player:load()
     player.collider = world:newRectangleCollider(player.x, player.y, player.width, player.height)
     player.collider:setFixedRotation(true)
     player.collider:setCollisionClass('player')
-    player.speed = 2
+    player.walkspeed = 2
+    player.fastspeed = 4
+    player.speed = player.walkspeed
     player.spriteSheet = love.graphics.newImage('assets/sprites/player/Walk-Sheet.png')
     player.grid = anim8.newGrid(20, 30, 80, 93)
 
@@ -38,6 +40,11 @@ function player:update(dt)
 
     local vx = 0
     local vy = 0
+    if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+       player.speed = player.fastspeed
+    else
+        player.speed = player.walkspeed
+    end
 
     if love.keyboard.isDown("right") then
         vx = player.speed
@@ -63,12 +70,10 @@ function player:update(dt)
     if #world:queryRectangleArea(player.collider:getX() +(player.width/2 *(vx/player.speed)), player.collider:getY() -(player.height/2), vx, player.height, {'wall', 'instance'}) == 0 then
         player.collider:setX(player.collider:getX() +vx)
     end
-    print(#world:queryRectangleArea(player.collider:getX() +(player.width/2 *(vx/player.speed)), player.collider:getY() -(player.height/2), vx, player.height, {'wall', 'instance'}))
 
     if #world:queryRectangleArea(player.collider:getX() -(player.width/2), player.collider:getY() +(player.height/2 *(vy/player.speed)), player.width, vy, {'wall', 'instance'}) == 0 then
         player.collider:setY(player.collider:getY() +vy)
     end
-    print(#world:queryRectangleArea(player.collider:getX() -(player.width/2), player.collider:getY() +(player.height/2 *(vy/player.speed)), player.width, vy, {'wall', 'instance'}))
 
     if isMoving == false then
        player.anim:gotoFrame(2)

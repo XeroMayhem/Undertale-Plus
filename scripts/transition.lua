@@ -57,8 +57,7 @@ function transition:transition(marker, map)
             elseif string.sub(obj.name, 1, 4) == "sign" then
 
             else
-                local script = 'scripts/world/events/' ..obj.name
-                local event = require(script)
+                local event = require ('scripts.world.events.' ..obj.name)
                 event:init()
             end
         end   
@@ -79,8 +78,8 @@ function transition:transition(marker, map)
         end
         gameMap.layers["Cutscene"].visible = false
     end
-    
-        
+
+    bgMusic:play()
 
 end
 

@@ -350,7 +350,7 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["script"] = "froggit03",
+            ["script"] = "froggit01",
             ["sprite"] = "Froggit.png"
           }
         },
@@ -382,7 +382,7 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["script"] = "noelle01",
+            ["script"] = "froggit01",
             ["sprite"] = "Froggit.png"
           }
         },

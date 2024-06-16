@@ -11,10 +11,12 @@ local function key_load()
                 for i, obj in pairs(gameMap.layers["Objects"].objects) do
                     if obj.id == colliders[1].id then
                         if string.sub(obj.name, 1, 3) == "npc" then
-                            local script = 'scripts/npc'
+                            local script = 'scripts/world/npcs/' ..gameMap:getObjectProperties("Objects", obj.name).script--'scripts/npc'
+                            --local event = require(script)
+                            --local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
                             local event = require(script)
-                            local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
-                            npc:onInteract()
+                            print(script)
+                            require(script):onInteract()
                         elseif string.sub(obj.name, 1, 4) == "sign" then
                             local event = require 'scripts/sign'
                             event:onInteract()
@@ -255,8 +257,8 @@ function love.draw()
         obj[2]:draw()
    end
 
-   world:draw()
-   world:setQueryDebugDrawing(true)
+   --world:draw()
+   --world:setQueryDebugDrawing(true)
 
    love.graphics.translate(0, 0)
    

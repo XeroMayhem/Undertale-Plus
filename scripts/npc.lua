@@ -3,13 +3,11 @@ local npc = {}
 function npc:create(x, y, index, sprite)
 
     local NPC = instance:create(x, y, 'assets/sprites/npcs/'..sprite, nil, 20, 10, 0, -5)
-    NPC.index = index
-
-    local script = 'scripts/world/npcs/' ..NPC.index
-    NPC.scripts = require(script)
 
     function NPC:onInteract()
-        NPC.scripts:onInteract()
+        local script = require('scripts/world/npcs/' ..index)
+        print('scripts/world/npcs/' ..index)
+        script:onInteract()
     end
 
     return NPC

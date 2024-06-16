@@ -97,7 +97,7 @@
  <objectgroup color="#ff00ff" id="7" name="Objects">
   <object id="11" name="npc_froggit01" x="310.5" y="60">
    <properties>
-    <property name="script" value="froggit03"/>
+    <property name="script" value="froggit01"/>
     <property name="sprite" value="Froggit.png"/>
    </properties>
    <point/>
@@ -111,7 +111,7 @@
   </object>
   <object id="14" name="npc_froggit02" x="520" y="80">
    <properties>
-    <property name="script" value="noelle01"/>
+    <property name="script" value="froggit01"/>
     <property name="sprite" value="Froggit.png"/>
    </properties>
    <point/>
