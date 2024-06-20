@@ -11,20 +11,20 @@ local function key_load()
                 for i, obj in pairs(gameMap.layers["Objects"].objects) do
                     if obj.id == colliders[1].id then
                         if string.sub(obj.name, 1, 3) == "npc" then
-                            local script = 'scripts/world/npcs/' ..gameMap:getObjectProperties("Objects", obj.name).script--'scripts/npc'
+                            local script = mod_loaded ..'scripts/world/npcs/' ..gameMap:getObjectProperties("Objects", obj.name).script--mod_loaded ..'scripts/npc'
                             --local event = require(script)
                             --local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
                             local event = require(script)
                             print(script)
                             require(script):onInteract()
                         elseif string.sub(obj.name, 1, 4) == "sign" then
-                            local event = require 'scripts/sign'
+                            local event = require 'engine/scripts/sign'
                             event:onInteract()
                         elseif string.sub(obj.name, 1, 10) == "transition" then
-                            local script = 'scripts/transition'
+                            local script = 'engine/scripts/transition'
                             local event = require(script)
                         else
-                            local script = 'scripts/world/events/' ..obj.name
+                            local script = mod_loaded ..'scripts/world/events/' ..obj.name
                             local event = require(script)
                             event:onInteract()
                         end
@@ -38,6 +38,29 @@ local function key_load()
     
     end)
 
+    input:keypress('c', function()
+
+        if playerFree == true then
+            overworld_menu:create()
+        elseif overworld_menu.isMain then
+            overworld_menu:destroy()
+        end
+    
+    end)
+
+end
+
+function draw_box(x, y, width, height, border)
+
+    if border == nil then
+        border = 3 *gameScale
+    end
+    
+    love.graphics.rectangle("fill", x, y, width, height)
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.rectangle("fill", x +(border), y +(border), (width -(border *2)), (height -(border *2)))
+    love.graphics.setColor(255, 255, 255)
+
 end
 
 function love.load()
@@ -45,30 +68,47 @@ function love.load()
     gameScale = 2
     love.audio.setVolume(1)
 
-    json = require 'libraries.json'
-    --[[ load mods
+    json = require 'engine.libraries.json'
+    
+    --load mods
     local open = io.open
-    local file = open("mods/testmod/mod.json", "rb")
+    local file = open("config.json", "rb")
     if not file then return nil end
     local jsonString = file:read "*a"
     file:close()
-    
-    modFile = json.decode(jsonString)
-    modPath = 'mods/testmod/'
-]]
-    Event = require 'scripts.events'
-    
-    map_sprite = require 'scripts.map_sprite'
-    instance = require 'scripts.object'
 
-    input = require 'scripts/input'
+    game_data = json.decode(jsonString)
+    mod_loaded = 'mods/'.. game_data["mod_dir"]..'/'
+
+    local open = io.open
+    local file = open(mod_loaded .."config.json", "rb")
+    if not file then return nil end
+    local jsonString = file:read "*a"
+    file:close()
+
+    mod_data = json.decode(jsonString)   
+
+    Event = require 'engine.scripts.events'
+    
+    map_sprite = require 'engine.scripts.map_sprite'
+    instance = require 'engine.scripts.object'
+
+    input = require 'engine/scripts/input'
     key_load()
-    font = require 'scripts/font'
+    font = require 'engine/scripts/font'
     
-    Textbox = require 'scripts/dialogue'
+    Textbox = require 'engine/scripts/dialogue'
     Textbox:init()
+    
+    TransitionIsActive = false
+    TransitionAlpha = 0
+    TransitionMultiplier = 1
+    curTransition = nil
+    
+    overworld_menu = require 'engine/scripts/overworld_menu'
+    overworld_menu:init()
 
-    wf = require 'libraries/windfield'
+    wf = require 'engine/libraries/windfield'
     world = wf.newWorld(0, 0)
     world:addCollisionClass('player')
     world:addCollisionClass('wall')
@@ -80,35 +120,33 @@ function love.load()
     love.window.setTitle("Undertale+")
     love.window.setMode(320 *gameScale, 240*gameScale)
 
-    anim8 = require 'libraries/anim8'
+    anim8 = require 'engine/libraries/anim8'
     love.graphics.setDefaultFilter("nearest", "nearest")
 
-    sti = require 'libraries/sti'
+    sti = require 'engine/libraries/sti'
     local map = 'RuinsTestMap'
-    gameMap = sti('scripts/world/maps/'.. map..'.lua')--sti(modPath ..'scripts/world/maps/' .. modFile.map ..'.lua') --Load Mod Map
+    gameMap = sti(mod_loaded ..'scripts/world/maps/' .. mod_data.map ..'.lua')--Load Mod Map --sti(mod_loaded ..'scripts/world/maps/'.. map..'.lua')
     
     playerFree = true
 
     cutsceneActive = false
     cutsceneReady = true
-    TransitionIsActive = false
-    TransitionAlpha = 0
-    TransitionMultiplier = 1
-    curTransition = nil
 
     music = {}
-    music.ruins = love.audio.newSource('assets/music/mus_ruins.ogg', "stream")
+    music.ruins = love.audio.newSource(mod_loaded ..'assets/music/' .. mod_data.song, "stream")
 
     bgMusic = music.ruins
     bgMusic:setLooping(true)
 
-
+    inventory = require 'engine.scripts.inventory'
+    inventory:create()
+    --inventory:addItem("snow_cone")--, "Dog Residue", "Nice Cream", "[[BIG SHOT]]"
 
     overworld = {}
     overworld.objects = {}
-    overworld.scripts = require 'scripts.overworld_scripts'
+    overworld.scripts = require 'engine.scripts.overworld_scripts'
 
-    player = require 'scripts.player'
+    player = require 'engine.scripts.player'
     player:load()
 
     camx = 0
@@ -145,13 +183,13 @@ function love.load()
             if string.sub(obj.name, 1, 10) == "transition" then
                 interactable:setCollisionClass('transition')
             elseif string.sub(obj.name, 1, 3) == "npc" then
-                local event = require ('scripts.npc')
+                local event = require ('engine.scripts.npc')
                 local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
                 npc:init()
             elseif string.sub(obj.name, 1, 4) == "sign" then
 
             else
-                local event = require ('scripts.world.events.' ..obj.name)
+                local event = require (mod_loaded ..'scripts.world.events.' ..obj.name)
                 event:init()
             end
         end   
@@ -175,6 +213,10 @@ function love.load()
 
     bgMusic:play()
 
+    --load save 
+    determination = require 'engine.scripts.determination'
+    determination:load()
+
 end
 
 function love.update(dt)
@@ -193,7 +235,7 @@ function love.update(dt)
                 if obj.id == colliders[1].id and cutsceneReady == true then
                     
                     cutsceneReady = false
-                    local script = 'scripts/world/cutscenes/' ..obj.name
+                    local script = mod_loaded ..'scripts/world/cutscenes/' ..obj.name
                     curCutscene = require(script)
                     curCutscene:init()
                 end
@@ -267,6 +309,10 @@ function love.draw()
         curCutscene:draw()
     end
 
+    if overworld_menu.active == true then
+        overworld_menu:draw()
+    end
+
     if Textbox.isActive == true then
         Textbox:draw()
     end
@@ -275,7 +321,7 @@ function love.draw()
         TransitionAlpha = TransitionAlpha +((1/10) *TransitionMultiplier)
         if TransitionAlpha >= 1 then
             TransitionMultiplier = -1
-            local script = 'scripts/transition'
+            local script = 'engine/scripts/transition'
             world:destroy()
             world = wf.newWorld(0, 0)
             world:addCollisionClass('player')
@@ -299,5 +345,4 @@ function love.draw()
         love.graphics.rectangle("fill", camx, camy, 640, 480)
         love.graphics.setColor(255, 255, 255, 1)
     end
-
 end
