@@ -9,8 +9,8 @@ return {
   height = 12,
   tilewidth = 20,
   tileheight = 20,
-  nextlayerid = 20,
-  nextobjectid = 84,
+  nextlayerid = 21,
+  nextobjectid = 92,
   properties = {},
   tilesets = {
     {
@@ -190,9 +190,9 @@ return {
       properties = {},
       encoding = "lua",
       data = {
-        152, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 94, 95, 96, 0, 142,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 94, 95, 96, 0, 142,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 94, 94, 96, 0, 142,
+        152, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
@@ -202,6 +202,38 @@ return {
         136, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
         16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 142,
         38, 7, 7, 7, 7, 7, 7, 7, 136, 0, 0, 134, 7, 7, 7, 39
+      }
+    },
+    {
+      type = "tilelayer",
+      x = 0,
+      y = 0,
+      width = 16,
+      height = 12,
+      id = 20,
+      name = "Vines",
+      class = "",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
+      properties = {},
+      encoding = "lua",
+      data = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 94, 95, 96, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 94, 95, 96, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 94, 94, 96, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
       }
     },
     {
@@ -270,7 +302,7 @@ return {
           shape = "rectangle",
           x = 80,
           y = 0,
-          width = 220,
+          width = 140,
           height = 60,
           rotation = 0,
           visible = true,
@@ -324,6 +356,19 @@ return {
           y = 60,
           width = 80,
           height = 80,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 85,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 260,
+          y = 0,
+          width = 40,
+          height = 60,
           rotation = 0,
           visible = true,
           properties = {}
@@ -393,18 +438,35 @@ return {
           }
         },
         {
-          id = 81,
-          name = "sign",
+          id = 84,
+          name = "npc_vines",
+          type = "",
+          shape = "point",
+          x = 230,
+          y = 52.5,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["script"] = "vines",
+            ["sprite"] = "no_sprite.png"
+          }
+        },
+        {
+          id = 89,
+          name = "transition_3",
           type = "",
           shape = "rectangle",
           x = 220,
-          y = 60,
+          y = 0,
           width = 40,
           height = 20,
           rotation = 0,
           visible = true,
           properties = {
-            ["text"] = "* Vines block the path.\n* If only you could cut them."
+            ["map"] = "Ruins03",
+            ["marker"] = "down_entry"
           }
         }
       }
@@ -456,6 +518,19 @@ return {
           shape = "point",
           x = 200,
           y = 120,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 90,
+          name = "up_entry",
+          type = "",
+          shape = "point",
+          x = 240,
+          y = 40,
           width = 0,
           height = 0,
           rotation = 0,

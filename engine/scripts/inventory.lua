@@ -8,7 +8,7 @@ function inventory:addItem(id)
     if #inventory.items < 8 then
         local item = require (mod_loaded ..'scripts.data.items.' ..id)
         table.insert(inventory.items, item)
-        inventory.items.id = id
+        inventory.items[#inventory.items].id = id
         inventory.items[#inventory.items]:init()
     else
         Textbox:create()

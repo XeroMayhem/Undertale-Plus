@@ -1,10 +1,16 @@
 
 local inst = {}
 
-function inst:create(x, y, sprite, depth, maskwidth, maskheight, xoffset, yoffset)
+function inst:create(x, y, sprite, depth, maskwidth, maskheight, xoffset, yoffset, name)
 
     local Object = {}
     
+    if name == nil then
+        Object.name = "nil"
+    else
+        Object.name = name
+    end
+
     Object.depth = depth
     Object.sprite = love.graphics.newImage(sprite)
     
@@ -26,6 +32,10 @@ function inst:create(x, y, sprite, depth, maskwidth, maskheight, xoffset, yoffse
     function Object:draw()
         map_sprite:draw(Object.x, Object.y, Object.sprite)
     end
+
+    --function Object:destroy()
+    --    Object.collider:destroy()
+    --end
     
     return Object
 

@@ -3,7 +3,8 @@ local transition = {}
 function transition:transition(marker, map)
 
     sti = require 'engine/libraries/sti'
-    gameMap = sti(mod_loaded ..'scripts/world/maps/' .. map ..'.lua')--sti(modPath ..mod_loaded ..'scripts/world/maps/' .. map ..'.lua') --Load Mod Map 
+    room = map
+    gameMap = sti(mod_loaded ..'scripts/world/maps/' .. room ..'.lua')--sti(modPath ..mod_loaded ..'scripts/world/maps/' .. room ..'.lua') --Load Mod Map 
 
     if gameMap.layers["Markers"] then
         for i, obj in pairs(gameMap.layers["Markers"].objects) do
@@ -21,63 +22,7 @@ function transition:transition(marker, map)
     overworld.objects = {}
     table.insert(overworld.objects, player)
     
-    walls = {}
-    if gameMap.layers["Markers"] then
-        gameMap.layers["Markers"].visible = false
-    end
-
-    if gameMap.layers["Collision"] then
-        for i, obj in pairs(gameMap.layers["Collision"].objects) do
-            local wall = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
-            wall:setType('static')
-            wall:setCollisionClass('wall')
-            table.insert(walls, wall)
-        end
-        gameMap.layers["Collision"].visible = false
-    end
-
-    --Interaction
-    if gameMap.layers["Objects"] then
-        for i, obj in pairs(gameMap.layers["Objects"].objects) do
-            local interactable = nil
-            if rawget(obj, width) ~= nil then
-                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
-            else
-                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, 20 *gameScale, 20 *gameScale)
-            end
-            interactable:setType('static')
-            interactable:setCollisionClass('interactable')
-            interactable.id = obj.id
-            if string.sub(obj.name, 1, 10) == "transition" then
-                interactable:setCollisionClass('transition')
-            elseif string.sub(obj.name, 1, 3) == "npc" then
-                local event = require ('engine.scripts.npc')
-                local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
-                npc:init()
-            elseif string.sub(obj.name, 1, 4) == "sign" then
-
-            else
-                local event = require (mod_loaded ..'scripts.world.events.' ..obj.name)
-                event:init()
-            end
-        end   
-        gameMap.layers["Objects"].visible = false
-    end
-
-    if gameMap.layers["Cutscene"] then
-        for i, obj in pairs(gameMap.layers["Cutscene"].objects) do
-            local interactable = nil
-            if rawget(obj, width) ~= nil then
-                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
-            else
-                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, 20 *gameScale, 20 *gameScale)
-            end
-            interactable:setType('static')
-            interactable:setCollisionClass('cutscene')
-            interactable.id = obj.id
-        end
-        gameMap.layers["Cutscene"].visible = false
-    end
+    load_map()
 
     bgMusic:play()
 

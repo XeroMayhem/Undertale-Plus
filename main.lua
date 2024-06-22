@@ -12,8 +12,6 @@ local function key_load()
                     if obj.id == colliders[1].id then
                         if string.sub(obj.name, 1, 3) == "npc" then
                             local script = mod_loaded ..'scripts/world/npcs/' ..gameMap:getObjectProperties("Objects", obj.name).script--mod_loaded ..'scripts/npc'
-                            --local event = require(script)
-                            --local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
                             local event = require(script)
                             print(script)
                             require(script):onInteract()
@@ -23,6 +21,8 @@ local function key_load()
                         elseif string.sub(obj.name, 1, 10) == "transition" then
                             local script = 'engine/scripts/transition'
                             local event = require(script)
+                        elseif string.sub(obj.name, 1, 10) == "save" then
+                            determination:save()
                         else
                             local script = mod_loaded ..'scripts/world/events/' ..obj.name
                             local event = require(script)
@@ -48,6 +48,12 @@ local function key_load()
     
     end)
 
+    input:keypress('s', function()
+
+        
+    
+    end)
+
 end
 
 function draw_box(x, y, width, height, border)
@@ -61,6 +67,90 @@ function draw_box(x, y, width, height, border)
     love.graphics.rectangle("fill", x +(border), y +(border), (width -(border *2)), (height -(border *2)))
     love.graphics.setColor(255, 255, 255)
 
+end
+
+function load_map()
+    walls = {}
+    if gameMap.layers["Markers"] then
+        gameMap.layers["Markers"].visible = false
+    end
+
+    if gameMap.layers["Collision"] then
+        for i, obj in pairs(gameMap.layers["Collision"].objects) do
+            local wall = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
+            wall:setType('static')
+            wall:setCollisionClass('wall')
+            table.insert(walls, wall)
+        end
+        gameMap.layers["Collision"].visible = false
+    end
+
+    --Interaction
+    if gameMap.layers["Objects"] then
+        local objLength = #overworld.objects
+        for i, obj in pairs(gameMap.layers["Objects"].objects) do
+            local interactable = nil
+            if obj["width"] ~= nil then
+                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, 20 *gameScale, 20 *gameScale)
+            else
+                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, 20 *gameScale, 20 *gameScale)
+            end
+            interactable:setType('static')
+            interactable:setCollisionClass('interactable')
+            interactable.id = obj.id
+            if string.sub(obj.name, 1, 10) == "transition" then
+                interactable:setCollisionClass('transition')
+            elseif string.sub(obj.name, 1, 3) == "npc" then
+                local event = require ('engine.scripts.npc')
+                local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
+                npc.name = obj.name
+                npc.id = i
+                npc:init()
+                function npc:destroy()
+                    table.remove(overworld.objects, objLength +npc.id)
+                    interactable:destroy()
+                    npc.collider:destroy()
+                end
+            elseif string.sub(obj.name, 1, 4) == "sign" then
+
+            elseif string.sub(obj.name, 1, 10) == "save" then
+                local event = require ('engine.scripts.save')
+                local save = event:create(obj.x *2, obj.y *2)
+                save.name = "save"
+                save:init() 
+            else
+                local event = require (mod_loaded ..'scripts.world.events.' ..obj.name)
+                event:init()
+            end
+        end
+        gameMap.layers["Objects"].visible = false
+    end
+
+    if gameMap.layers["Cutscene"] then
+        for i, obj in pairs(gameMap.layers["Cutscene"].objects) do
+            local interactable = nil
+            if rawget(obj, Width) ~= nil then
+                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
+            else
+                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, 20 *gameScale, 20 *gameScale)
+            end
+            interactable:setType('static')
+            interactable:setCollisionClass('cutscene')
+            interactable.id = obj.id
+        end
+        gameMap.layers["Cutscene"].visible = false
+    end
+end
+
+function reset_world()
+    world:destroy()
+    world = wf.newWorld(0, 0)
+    world:addCollisionClass('player')
+    world:addCollisionClass('wall')
+    world:addCollisionClass('instance')
+    world:addCollisionClass('interactable', {ignores = {'player'}})
+    world:addCollisionClass('transition', {ignores = {'player'}})
+    world:addCollisionClass('cutscene', {ignores = {'player'}})
 end
 
 function love.load()
@@ -87,6 +177,11 @@ function love.load()
     file:close()
 
     mod_data = json.decode(jsonString)   
+
+    flag = {}
+    for i = 1, mod_data.flag_count do
+        table.insert(flag, 0)
+    end
 
     Event = require 'engine.scripts.events'
     
@@ -124,8 +219,8 @@ function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
 
     sti = require 'engine/libraries/sti'
-    local map = 'RuinsTestMap'
-    gameMap = sti(mod_loaded ..'scripts/world/maps/' .. mod_data.map ..'.lua')--Load Mod Map --sti(mod_loaded ..'scripts/world/maps/'.. map..'.lua')
+    room = mod_data.map
+    gameMap = sti(mod_loaded ..'scripts/world/maps/' .. room ..'.lua')--Load Mod Map --sti(mod_loaded ..'scripts/world/maps/'.. map..'.lua')
     
     playerFree = true
 
@@ -153,63 +248,7 @@ function love.load()
     camy = 0
     camf = player
 
-    walls = {}
-    if gameMap.layers["Markers"] then
-        gameMap.layers["Markers"].visible = false
-    end
-
-    if gameMap.layers["Collision"] then
-        for i, obj in pairs(gameMap.layers["Collision"].objects) do
-            local wall = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
-            wall:setType('static')
-            wall:setCollisionClass('wall')
-            table.insert(walls, wall)
-        end
-        gameMap.layers["Collision"].visible = false
-    end
-
-    --Interaction
-    if gameMap.layers["Objects"] then
-        for i, obj in pairs(gameMap.layers["Objects"].objects) do
-            local interactable = nil
-            if rawget(obj, width) ~= nil then
-                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
-            else
-                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, 20 *gameScale, 20 *gameScale)
-            end
-            interactable:setType('static')
-            interactable:setCollisionClass('interactable')
-            interactable.id = obj.id
-            if string.sub(obj.name, 1, 10) == "transition" then
-                interactable:setCollisionClass('transition')
-            elseif string.sub(obj.name, 1, 3) == "npc" then
-                local event = require ('engine.scripts.npc')
-                local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
-                npc:init()
-            elseif string.sub(obj.name, 1, 4) == "sign" then
-
-            else
-                local event = require (mod_loaded ..'scripts.world.events.' ..obj.name)
-                event:init()
-            end
-        end   
-        gameMap.layers["Objects"].visible = false
-    end
-
-    if gameMap.layers["Cutscene"] then
-        for i, obj in pairs(gameMap.layers["Cutscene"].objects) do
-            local interactable = nil
-            if rawget(obj, width) ~= nil then
-                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
-            else
-                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, 20 *gameScale, 20 *gameScale)
-            end
-            interactable:setType('static')
-            interactable:setCollisionClass('cutscene')
-            interactable.id = obj.id
-        end
-        gameMap.layers["Cutscene"].visible = false
-    end
+    load_map()
 
     bgMusic:play()
 
@@ -220,8 +259,6 @@ function love.load()
 end
 
 function love.update(dt)
-
-    world:update(dt)
 
     if playerFree == true then
 
@@ -278,6 +315,11 @@ function love.update(dt)
     camx = math.min(camx, (gameMap.width  *gameMap.tilewidth *gameScale) -(320*gameScale))
     camy = math.min(camy, (gameMap.height  *gameMap.tileheight *gameScale) -(240*gameScale))
 
+    world:update(dt)
+
+    local world_file = mod_loaded .."scripts.world.world_update"
+    require (world_file):update()
+
     if Textbox.isActive == true then
         Textbox:update()
     end
@@ -288,7 +330,7 @@ function love.draw()
 
     love.graphics.translate(-camx, -camy)
 
-    gameMap:draw(-camx/2, nil, gameScale, gameScale)
+    gameMap:draw(-camx/2, -camy/2, gameScale, gameScale)
     
     local objects = {}
     for i=1, #overworld.objects do
@@ -322,14 +364,7 @@ function love.draw()
         if TransitionAlpha >= 1 then
             TransitionMultiplier = -1
             local script = 'engine/scripts/transition'
-            world:destroy()
-            world = wf.newWorld(0, 0)
-            world:addCollisionClass('player')
-            world:addCollisionClass('wall')
-            world:addCollisionClass('instance')
-            world:addCollisionClass('interactable', {ignores = {'player'}})
-            world:addCollisionClass('transition', {ignores = {'player'}})
-            world:addCollisionClass('cutscene', {ignores = {'player'}})
+            reset_world()
             curCutscene = require(script)
             curCutscene:transition(gameMap:getObjectProperties("Objects", curTransition.name).marker, gameMap:getObjectProperties("Objects", curTransition.name).map)
             playerFree = true
@@ -345,4 +380,7 @@ function love.draw()
         love.graphics.rectangle("fill", camx, camy, 640, 480)
         love.graphics.setColor(255, 255, 255, 1)
     end
+    font:draw(player.hp .. '/' ..player.hpmax, camx, camy)
+    font:draw('Flag 1: ' ..flag[1], camx, camy +32)
+    font:draw('Flag 2: ' ..flag[2], camx, camy +64)
 end

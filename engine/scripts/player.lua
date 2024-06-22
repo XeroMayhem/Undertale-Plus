@@ -97,4 +97,12 @@ function player:draw()
     player.anim:draw(player.spriteSheet, player.x, player.y, nil, gameScale)
 end
 
+function player:setPosition(x, y)
+    player.collider:setX(x)
+    player.collider:setY(y)
+    player.x = player.collider:getX() -(10 * gameScale)
+    player.y = player.collider:getY() -(15 * gameScale) -(29/4 *gameScale)
+    player.depth = -player.collider:getY()
+end
+
 return player
