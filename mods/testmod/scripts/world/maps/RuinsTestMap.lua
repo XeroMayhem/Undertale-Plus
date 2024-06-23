@@ -10,7 +10,7 @@ return {
   tilewidth = 20,
   tileheight = 20,
   nextlayerid = 16,
-  nextobjectid = 81,
+  nextobjectid = 82,
   properties = {},
   tilesets = {
     {
@@ -377,21 +377,6 @@ return {
           }
         },
         {
-          id = 58,
-          name = "sign",
-          type = "",
-          shape = "point",
-          x = 260,
-          y = 80,
-          width = 0,
-          height = 0,
-          rotation = 0,
-          visible = true,
-          properties = {
-            ["text"] = "[\"* There appears to be a crack in the wall.\", \"* I wonder what caused it.\"]"
-          }
-        },
-        {
           id = 79,
           name = "transition",
           type = "",
@@ -405,6 +390,21 @@ return {
           properties = {
             ["map"] = "Ruins01",
             ["marker"] = "down_entry"
+          }
+        },
+        {
+          id = 81,
+          name = "sign",
+          type = "",
+          shape = "rectangle",
+          x = 240,
+          y = 80,
+          width = 40,
+          height = 20,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["text"] = "[\"* There appears to be a crack in the wall.\", \"* I wonder what caused it.\"]"
           }
         }
       }

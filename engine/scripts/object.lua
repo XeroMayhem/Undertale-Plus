@@ -12,9 +12,15 @@ function inst:create(x, y, sprite, depth, maskwidth, maskheight, xoffset, yoffse
     end
 
     Object.depth = depth
-    Object.sprite = love.graphics.newImage(sprite)
-    
-    Object.collider = world:newRectangleCollider(x +xoffset, y +yoffset, maskwidth *gameScale, maskheight *gameScale)
+    Object.fps = 4
+    Object.frame = 1
+    Object.frameTimer = 1
+    if love.filesystem.getInfo(sprite, 'file') then
+        Object.sprite = love.graphics.newImage(sprite)
+    else
+        Object.sprite = sprite
+    end
+    Object.collider = world:newRectangleCollider(x, y, maskwidth *gameScale, maskheight *gameScale)
     Object.collider:setCollisionClass('instance')
     Object.collider:setType('static')
     
@@ -30,7 +36,21 @@ function inst:create(x, y, sprite, depth, maskwidth, maskheight, xoffset, yoffse
     end
     
     function Object:draw()
-        map_sprite:draw(Object.x, Object.y, Object.sprite)
+        local tsprite = Object.sprite
+        if type(Object.sprite) == 'string' then
+            Object.frameTimer = Object.frameTimer+1
+            if Object.frameTimer > 60/Object.fps then
+                Object.frame = Object.frame+1
+                Object.frameTimer = 1
+            end
+            local sprite_file = Object.sprite ..'_'..Object.frame ..'.png'
+            if not love.filesystem.getInfo(sprite_file) then
+                Object.frame = 1
+                sprite_file = Object.sprite ..'_'..Object.frame ..'.png'
+            end
+            tsprite = love.graphics.newImage(sprite_file)
+        end 
+        map_sprite:draw(Object.x, Object.y, tsprite, Object.frame)
     end
 
     --function Object:destroy()

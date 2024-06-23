@@ -6,7 +6,6 @@ function npc:create(x, y, index, sprite)
 
     function NPC:onInteract()
         local script = require(mod_loaded ..'scripts/world/npcs/' ..index)
-        print(mod_loaded ..mod_loaded ..'scripts/world/npcs/' ..index)
         script:onInteract()
     end
 
@@ -25,7 +24,6 @@ for i, obj in pairs(gameMap.layers["Objects"].objects) do
         y = obj.y *2
         index = gameMap:getObjectProperties("Objects", obj.name).script
         sprite = gameMap:getObjectProperties("Objects", obj.name).sprite
-        print(index)
     end
 end
 

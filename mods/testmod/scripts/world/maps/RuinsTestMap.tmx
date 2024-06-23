@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="20" tileheight="20" infinite="0" nextlayerid="16" nextobjectid="81">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="20" tileheight="20" infinite="0" nextlayerid="16" nextobjectid="82">
  <editorsettings>
   <export target="RuinsTestMap.lua" format="lua"/>
  </editorsettings>
@@ -123,16 +123,15 @@
    </properties>
    <point/>
   </object>
-  <object id="58" name="sign" x="260" y="80">
-   <properties>
-    <property name="text" value="[&quot;* There appears to be a crack in the wall.&quot;, &quot;* I wonder what caused it.&quot;]"/>
-   </properties>
-   <point/>
-  </object>
   <object id="79" name="transition" x="140" y="60" width="40" height="20">
    <properties>
     <property name="map" value="Ruins01"/>
     <property name="marker" value="down_entry"/>
+   </properties>
+  </object>
+  <object id="81" name="sign" x="240" y="80" width="40" height="20">
+   <properties>
+    <property name="text" value="[&quot;* There appears to be a crack in the wall.&quot;, &quot;* I wonder what caused it.&quot;]"/>
    </properties>
   </object>
  </objectgroup>

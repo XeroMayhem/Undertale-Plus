@@ -4,8 +4,7 @@ local function key_load()
 
         if playerFree == true then
     
-            local px, py = player.collider:getPosition()
-            local colliders = world:queryCircleArea(px, py, 20 *gameScale, {'interactable'})
+            local colliders = player:checkDirect({'interactable'})
     
             if #colliders > 0 then
                 for i, obj in pairs(gameMap.layers["Objects"].objects) do
@@ -13,7 +12,6 @@ local function key_load()
                         if string.sub(obj.name, 1, 3) == "npc" then
                             local script = mod_loaded ..'scripts/world/npcs/' ..gameMap:getObjectProperties("Objects", obj.name).script--mod_loaded ..'scripts/npc'
                             local event = require(script)
-                            print(script)
                             require(script):onInteract()
                         elseif string.sub(obj.name, 1, 4) == "sign" then
                             local event = require 'engine/scripts/sign'
@@ -50,7 +48,6 @@ local function key_load()
 
     input:keypress('s', function()
 
-        
     
     end)
 
@@ -87,11 +84,11 @@ function load_map()
 
     --Interaction
     if gameMap.layers["Objects"] then
-        local objLength = #overworld.objects
+        local objLength = #overworld.objects +1
         for i, obj in pairs(gameMap.layers["Objects"].objects) do
             local interactable = nil
-            if obj["width"] ~= nil then
-                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, 20 *gameScale, 20 *gameScale)
+            if obj["width"] > 0 then
+                interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
             else
                 interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, 20 *gameScale, 20 *gameScale)
             end
@@ -104,10 +101,10 @@ function load_map()
                 local event = require ('engine.scripts.npc')
                 local npc = event:create(obj.x *2, obj.y *2, gameMap:getObjectProperties("Objects", obj.name).script, gameMap:getObjectProperties("Objects", obj.name).sprite)
                 npc.name = obj.name
-                npc.id = i
+                npc.id = i +objLength
                 npc:init()
                 function npc:destroy()
-                    table.remove(overworld.objects, objLength +npc.id)
+                    table.remove(overworld.objects, npc.id)
                     interactable:destroy()
                     npc.collider:destroy()
                 end
@@ -151,10 +148,12 @@ function reset_world()
     world:addCollisionClass('interactable', {ignores = {'player'}})
     world:addCollisionClass('transition', {ignores = {'player'}})
     world:addCollisionClass('cutscene', {ignores = {'player'}})
+    world:addCollisionClass('ghost', {ignores = {'player'}})
 end
 
 function love.load()
 
+    --print('psst i see dead people')
     gameScale = 2
     love.audio.setVolume(1)
 
@@ -211,6 +210,7 @@ function love.load()
     world:addCollisionClass('interactable', {ignores = {'player'}})
     world:addCollisionClass('transition', {ignores = {'player'}})
     world:addCollisionClass('cutscene', {ignores = {'player'}})
+    world:addCollisionClass('ghost', {ignores = {'player'}})
 
     love.window.setTitle("Undertale+")
     love.window.setMode(320 *gameScale, 240*gameScale)
@@ -259,13 +259,13 @@ function love.load()
 end
 
 function love.update(dt)
-
+    
     if playerFree == true then
 
         player:update(dt)
 
         local px, py = player.collider:getPosition()
-        local colliders = world:queryCircleArea(px, py, 20, {'cutscene'})
+        local colliders = player:checkDirect({'cutscene'})
 
         if #colliders > 0 then
             for i, obj in pairs(gameMap.layers["Cutscene"].objects) do
@@ -281,7 +281,7 @@ function love.update(dt)
             cutsceneReady = true
         end
 
-        colliders = world:queryCircleArea(px, py, 20, {'transition'})
+        colliders = world:queryRectangleArea(player.x, player.y +player.height, player.width, player.height, {'transition'})
 
         if #colliders > 0 then
             for i, obj in pairs(gameMap.layers["Objects"].objects) do
@@ -380,7 +380,9 @@ function love.draw()
         love.graphics.rectangle("fill", camx, camy, 640, 480)
         love.graphics.setColor(255, 255, 255, 1)
     end
+    --[[
     font:draw(player.hp .. '/' ..player.hpmax, camx, camy)
     font:draw('Flag 1: ' ..flag[1], camx, camy +32)
     font:draw('Flag 2: ' ..flag[2], camx, camy +64)
+    ]]
 end

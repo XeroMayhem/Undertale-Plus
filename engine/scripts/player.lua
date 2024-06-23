@@ -105,4 +105,30 @@ function player:setPosition(x, y)
     player.depth = -player.collider:getY()
 end
 
+function player:checkDirect(class)
+    if class == nil then
+        class = {}
+    end
+    local x = player.x
+    local y = player.y +player.height
+    local width = player.width
+    local height = player.height
+    local colliders = {}
+
+    if player.anim == player.animations.right then
+        colliders = world:queryRectangleArea(x +player.width, y, width, height, class)
+
+    elseif player.anim == player.animations.left then
+        colliders = world:queryRectangleArea(x -player.width, y, width, height, class)
+
+    elseif player.anim == player.animations.up then
+        colliders = world:queryRectangleArea(x, y -player.height, width, height, class)
+
+    elseif player.anim == player.animations.down then
+        colliders =  world:queryRectangleArea(x, y +player.height, width, height, class)
+    end
+
+    return colliders
+end
+
 return player

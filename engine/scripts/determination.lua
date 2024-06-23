@@ -6,8 +6,8 @@ function dt:save()
     if not file then return nil else
         local data = {}
         --player
-        data.x = player.x
-        data.y = player.y
+        data.x = player.collider:getX()
+        data.y = player.collider:getY()
         data.hp = player.hp
         data.hpmax = player.hpmax
 

@@ -2,6 +2,7 @@ local npc = {}
 
 function npc:onInteract()
     if flag[1] < 2 then
+
         Textbox:create()
         if flag[1] == 0 then
             Textbox:pageParams("* Vines block the path.")
