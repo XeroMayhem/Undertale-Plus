@@ -5,11 +5,7 @@ function inst:create(x, y, sprite, depth, maskwidth, maskheight, xoffset, yoffse
 
     local Object = {}
     
-    if name == nil then
-        Object.name = "nil"
-    else
-        Object.name = name
-    end
+    Object.name = defaultValue(name, "nill")
 
     Object.depth = depth
     Object.fps = 4
@@ -29,10 +25,8 @@ function inst:create(x, y, sprite, depth, maskwidth, maskheight, xoffset, yoffse
     
     Object.x = Object.collider:getX()/gameScale +(xoffset)
     Object.y = Object.collider:getY()/gameScale +(yoffset)
-    
-    if depth == nil then
-        Object.depth = -Object.collider:getY()
-    end
+
+    Object.depth = defaultValue(depth, -Object.collider:getY())
     
     function Object:init()
         table.insert(overworld.objects, Object)

@@ -10,7 +10,7 @@ return {
   tilewidth = 20,
   tileheight = 20,
   nextlayerid = 21,
-  nextobjectid = 94,
+  nextobjectid = 95,
   properties = {},
   tilesets = {
     {
@@ -438,22 +438,6 @@ return {
           }
         },
         {
-          id = 84,
-          name = "npc_vines",
-          type = "",
-          shape = "point",
-          x = 230,
-          y = 52.5,
-          width = 0,
-          height = 0,
-          rotation = 0,
-          visible = true,
-          properties = {
-            ["script"] = "vines",
-            ["sprite"] = "no_sprite.png"
-          }
-        },
-        {
           id = 89,
           name = "transition_3",
           type = "",
@@ -467,6 +451,22 @@ return {
           properties = {
             ["map"] = "Ruins03",
             ["marker"] = "down_entry"
+          }
+        },
+        {
+          id = 94,
+          name = "npc_vines",
+          type = "",
+          shape = "rectangle",
+          x = 220,
+          y = 40,
+          width = 40,
+          height = 20,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["script"] = "vines",
+            ["sprite"] = "no_sprite.png"
           }
         }
       }

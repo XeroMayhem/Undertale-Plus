@@ -31,15 +31,15 @@ function inventory:useItem(id)
         end
         finText = "* You ate the " ..item.name ..".^* ".. text
     elseif item.type == "atk" then
-        local prev = player.weapon
-        player.weapon = item.id
+        local prev = player.weapon.id
+        inventory:setWeapon(item.id)
         if prev ~= "" then
             inventory:addItem(prev)
         end
         finText = "* You equipped the ".. item.name.."."
     elseif item.type == "def" then
-        local prev = player.armour
-        player.armour = item.id
+        local prev = player.armor
+        inventory:setArmor(item.id)
         if prev ~= "" then
             inventory:addItem(prev)
         end
@@ -48,6 +48,18 @@ function inventory:useItem(id)
 
     table.remove(inventory.items, id)
     return finText
+end
+
+function inventory:setWeapon(id)
+    player.weapon = require (mod_loaded ..'scripts.data.items.' ..id)
+    player.weapon.id = id
+    player.weapon:init()
+end
+
+function inventory:setArmor(id)
+    player.armor = require (mod_loaded ..'scripts.data.items.' ..id)
+    player.armor.id = id
+    player.armor:init()
 end
 
 return inventory

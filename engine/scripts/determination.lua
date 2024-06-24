@@ -10,6 +10,13 @@ function dt:save()
         data.y = player.collider:getY()
         data.hp = player.hp
         data.hpmax = player.hpmax
+        data.love = player.love
+        data.gold = player.gold
+        data.exp = player.exp
+        data.weapon = player.weapon.id
+        data.armor = player.armor.id
+
+        data.has_cell = overworld_menu.has_cell
 
         --world
         data.room = room
@@ -47,6 +54,14 @@ function dt:load()
     player:setPosition(save_data.x, save_data.y)
     player.hp = save_data.hp
     player.hpmax = save_data.hpmax
+    player.love = save_data.love
+    player.gold = save_data.gold
+    player.exp = save_data.exp
+    inventory:setWeapon(save_data.weapon)
+    inventory:setArmor(save_data.armor)
+    player.gold = save_data.gold
+
+    overworld_menu.has_cell = save_data.has_cell
 
     for i = 1, #save_data.flag do
         flag[i] = save_data.flag[i]

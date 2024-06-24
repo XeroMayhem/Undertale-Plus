@@ -1,1 +1,1 @@
-{"room":"Ruins03","flag":[2,0],"inventory":[],"x":534.5,"y":794.97985839844,"hp":1,"hpmax":20}
+{"armor":"fur_armour","x":550.5,"y":796.5,"room":"Ruins03","inventory":["snow_cone","snow_cone"],"hp":11,"hpmax":20,"love":1,"flag":[2,0],"weapon":"big_shot","has_cell":true,"gold":0,"exp":0}

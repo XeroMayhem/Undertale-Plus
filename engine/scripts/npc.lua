@@ -1,8 +1,12 @@
 local npc = {}
 
-function npc:create(x, y, index, sprite)
+function npc:create(x, y, index, sprite, maskwidth, maskheight, xoffset, yoffset)
 
-    local NPC = instance:create(x, y, mod_loaded ..'assets/sprites/npcs/'..sprite, nil, 20, 10, 0, -5)
+    maskwidth = defaultValue(maskwidth, 20)
+    maskheight = defaultValue(maskheight, 10)
+    xoffset = defaultValue(xoffset, 0)
+    yoffset = defaultValue(yoffset, -5)
+    local NPC = instance:create(x, y, mod_loaded ..'assets/sprites/npcs/'..sprite, nil, maskwidth, maskheight, xoffset, yoffset)
 
     function NPC:onInteract()
         local script = require(mod_loaded ..'scripts/world/npcs/' ..index)

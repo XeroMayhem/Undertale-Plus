@@ -35,8 +35,25 @@ function player:load()
     player.name = "Xero"
     player.hp = 1
     player.hpmax = 20--32
-    player.weapon = ""
-    player.armour = ""
+    player.at = 10--32
+    player.df = 10--32
+    player.weapon = nil
+    inventory:setWeapon('big_shot')
+    player.armor = nil
+    inventory:setArmor('fur_armour')
+    player.love = 1
+    player.gold = 0
+    player.exp = 0
+
+    player.levels = {}
+    local add_levels = function (hp, at, df, exp)
+        table.insert(player.levels, {hp = hp, at = at, df = df, exp = exp})
+    end
+    add_levels(20, 0, 0, 0)
+    add_levels(24, 2, 0, 10)
+    add_levels(28, 4, 0, 30)
+    add_levels(32, 6, 0, 70)
+    add_levels(36, 8, 1, 120)
 
     table.insert(overworld.objects, player)
 
@@ -106,9 +123,8 @@ function player:setPosition(x, y)
 end
 
 function player:checkDirect(class)
-    if class == nil then
-        class = {}
-    end
+    class = defaultValue(class, {})
+    
     local x = player.x
     local y = player.y +player.height
     local width = player.width

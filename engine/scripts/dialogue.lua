@@ -81,24 +81,22 @@ function dialogue:create()
 end
 
 function dialogue:pageParams(text, sound, portrait, pos)
-   table.insert(dialogue.text, text)
+    table.insert(dialogue.text, text)
 
-   if sound == nil then
-        sound = 'snd_text.wav'
+    sound = defaultValue(sound, 'snd_text.wav')
+    table.insert(dialogue.sound, sound)
+    
+    table.insert(dialogue.portrait, portrait)
+    
+    if pos == nil then
+         pos = 0
+         if player.y -camy < 160 *gameScale then
+             pos = 1
+         end
     end
-   table.insert(dialogue.sound, sound)
-   
-   table.insert(dialogue.portrait, portrait)
-   
-   if pos == nil then
-        pos = 0
-        if player.y -camy < 160 *gameScale then
-            pos = 1
-        end
-   end
-   table.insert(dialogue.pos, pos)
-
-   dialogue.pageNum = dialogue.pageNum +1
+    table.insert(dialogue.pos, pos)
+    
+    dialogue.pageNum = dialogue.pageNum +1
 end
 
 function dialogue:setChoice(choice, func)
@@ -167,9 +165,7 @@ function dialogue:update()
                             txttrue = txt
                         end
                     end
-                    if txttrue == nil then
-                        txttrue = xtxt
-                    end
+                    defaultValue(txttrue, xtxt)
                     if #txttrue * 16 > dialogue.lineWidth then
                         if dialogue.text[p]:sub(1, 1) == "*" then
                             xtxt = "  "
