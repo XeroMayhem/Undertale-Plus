@@ -18,7 +18,10 @@ function inst:create(x, y, sprite, depth, maskwidth, maskheight, xoffset, yoffse
     if love.filesystem.getInfo(sprite, 'file') then
         Object.sprite = love.graphics.newImage(sprite)
     else
-        Object.sprite = sprite
+        Object.sprite = sprite    
+        if love.filesystem.getInfo(Object.sprite ..'_0.png') then
+            Object.frame = 0
+        end
     end
     Object.collider = world:newRectangleCollider(x, y, maskwidth *gameScale, maskheight *gameScale)
     Object.collider:setCollisionClass('instance')
@@ -46,6 +49,9 @@ function inst:create(x, y, sprite, depth, maskwidth, maskheight, xoffset, yoffse
             local sprite_file = Object.sprite ..'_'..Object.frame ..'.png'
             if not love.filesystem.getInfo(sprite_file) then
                 Object.frame = 1
+                if love.filesystem.getInfo(Object.sprite ..'_0.png') then
+                    Object.frame = 0
+                end
                 sprite_file = Object.sprite ..'_'..Object.frame ..'.png'
             end
             tsprite = love.graphics.newImage(sprite_file)

@@ -351,7 +351,7 @@ return {
           visible = true,
           properties = {
             ["script"] = "froggit01",
-            ["sprite"] = "Froggit.png"
+            ["sprite"] = "froggit/froggit"
           }
         },
         {
@@ -367,7 +367,7 @@ return {
           visible = true,
           properties = {
             ["script"] = "froggit01",
-            ["sprite"] = "Froggit.png"
+            ["sprite"] = "froggit/froggit"
           }
         },
         {
@@ -383,7 +383,7 @@ return {
           visible = true,
           properties = {
             ["script"] = "froggit01",
-            ["sprite"] = "Froggit.png"
+            ["sprite"] = "froggit/froggit"
           }
         },
         {
