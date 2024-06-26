@@ -7,7 +7,10 @@ Plus.States = {
 }
 Plus.LoadedState = nil
 
-function love.load()
+function Plus:loadState(state)
+    Plus.LoadedState = state
+    dofile(Plus.States[Plus.LoadedState] ..'.lua')
+end
 
     local json = require 'engine.libraries.json'
     local open = io.open
@@ -23,10 +26,3 @@ function love.load()
     else
         Plus:loadState('mod_hub')
     end
-
-end
-
-function Plus:loadState(state)
-    Plus.LoadedState = state
-    dofile(Plus.States[Plus.LoadedState] ..'.lua')
-end
