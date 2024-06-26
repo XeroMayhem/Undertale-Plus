@@ -20,17 +20,41 @@ function player:load()
     player.walkspeed = 2
     player.fastspeed = 4
     player.speed = player.walkspeed
-    player.spriteSheet = love.graphics.newImage('assets/sprites/player/Walk-Sheet.png')
-    player.grid = anim8.newGrid(20, 30, 80, 93)
 
     player.animations = {}
-    player.animations.down = anim8.newAnimation(player.grid('1-4', 1), 0.25)
-    player.animations.left = anim8.newAnimation(player.grid('1-2', 2), 0.25)
-    player.animations.left = anim8.newAnimation(player.grid('1-2', 2), 0.25)
-    player.animations.right = anim8.newAnimation(player.grid('3-4', 2), 0.25)
-    player.animations.up = anim8.newAnimation(player.grid('1-4', 3), 0.25)
+    player.animations.down = 'assets/sprites/player/walk/down'
+    player.animations.left = 'assets/sprites/player/walk/left'
+    player.animations.right = 'assets/sprites/player/walk/right'
+    player.animations.up = 'assets/sprites/player/walk/up'
 
+    player.fps = 4
+    player.frame = 1
+    player.frameTimer = 1
     player.anim = player.animations.down
+    if love.filesystem.getInfo(player.anim, 'file') then
+        player.sprite = love.graphics.newImage(player.anim)
+    else 
+        if love.filesystem.getInfo(player.anim ..'_0.png') then
+            player.frame = 0
+        end
+    end
+    player.sprite = player.anim
+    if type(player.anim) == 'string' then
+        player.frameTimer = player.frameTimer+1
+        if player.frameTimer > 60/player.fps then
+            player.frame = player.frame+1
+            player.frameTimer = 1
+        end
+        local sprite_file = player.anim ..'_'..player.frame ..'.png'
+        if not love.filesystem.getInfo(sprite_file) then
+            player.frame = 1
+            if love.filesystem.getInfo(player.anim ..'_0.png') then
+                player.frame = 0
+            end
+            sprite_file = player.anim ..'_'..player.frame ..'.png'
+        end
+        player.sprite = love.graphics.newImage(sprite_file)
+    end
 
     player.name = "Xero"
     player.hp = 1
@@ -60,6 +84,7 @@ function player:load()
 end
 
 function player:update(dt)
+
     local isMoving = false
 
     local vx = 0
@@ -100,18 +125,52 @@ function player:update(dt)
     end
 
     if isMoving == false then
-       player.anim:gotoFrame(2)
+       player.frame = 1
+        local sprite_file = player.anim ..'_'..player.frame ..'.png'
+       sprite_file = player.anim ..'_'..player.frame ..'.png'
+        player.sprite = love.graphics.newImage(sprite_file)
+    else
+        player.sprite = player.anim
+        if type(player.anim) == 'string' then
+            player.frameTimer = player.frameTimer+1
+            if player.frameTimer > 60/player.fps then
+                player.frame = player.frame+1
+                player.frameTimer = 1
+            end
+            local sprite_file = player.anim ..'_'..player.frame ..'.png'
+            if not love.filesystem.getInfo(sprite_file) then
+                player.frame = 1
+                if love.filesystem.getInfo(player.anim ..'_0.png') then
+                    player.frame = 0
+                end
+                sprite_file = player.anim ..'_'..player.frame ..'.png'
+            end
+            player.sprite = love.graphics.newImage(sprite_file)
+        end
     end
 
     player.x = player.collider:getX() -(10 * gameScale)
     player.y = player.collider:getY() -(15 * gameScale) -(29/4 *gameScale)
     player.depth = -player.collider:getY()
-    player.anim:update(dt)
 
 end
 
 function player:draw()
-    player.anim:draw(player.spriteSheet, player.x, player.y, nil, gameScale)
+
+    love.graphics.draw(player.sprite, player.x, player.y, nil, gameScale)
+end
+
+function player:setSprite(sprite)
+    player.frame = 1
+    player.frameTimer = 1
+    player.anim = sprite
+    if love.filesystem.getInfo(player.anim, 'file') then
+        player.sprite = love.graphics.newImage(player.anim)
+    else 
+        if love.filesystem.getInfo(player.anim ..'_0.png') then
+            player.frame = 0
+        end
+    end
 end
 
 function player:setPosition(x, y)
