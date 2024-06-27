@@ -10,10 +10,6 @@ loader.optionSel = 1
 
 loader.selectMod = false
 
-love.window.setTitle("Undertale+")
-love.window.setMode(320 *2, 240 *2)
-love.graphics.setDefaultFilter("nearest", "nearest")
-
 input:keypress('z', function()
 
     if Plus.LoadedState == 'mod_hub' then
@@ -21,7 +17,9 @@ input:keypress('z', function()
         if loader.optionSel == 1 then
             if loader.selectMod == false then
                 loader.selectMod = true
-            else
+            else           
+                mod_loaded = 'mods/'.. game_data["mod_dir"]..'/'
+                mod_data = love.filesystem.load(mod_loaded ..'data.lua')()
                 Plus:loadState('game')
             end
         elseif loader.optionSel == 2 then

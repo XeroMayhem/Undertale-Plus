@@ -169,22 +169,6 @@ end
     json = require 'engine.libraries.json'
     
     --load mods
-    local open = io.open
-    local file = open("config.json", "rb")
-    if not file then return nil end
-    local jsonString = file:read "*a"
-    file:close()
-
-    game_data = json.decode(jsonString)
-    mod_loaded = 'mods/'.. game_data["mod_dir"]..'/'
-
-    local open = io.open
-    local file = open(mod_loaded .."config.json", "rb")
-    if not file then return nil end
-    local jsonString = file:read "*a"
-    file:close()
-
-    mod_data = json.decode(jsonString)   
 
     flag = {}
     for i = 1, mod_data.flag_count do
@@ -354,8 +338,8 @@ function love.draw()
         obj[2]:draw()
     end
 
-    --world:draw()
-    --world:setQueryDebugDrawing(true)
+    world:draw()
+    world:setQueryDebugDrawing(true)
 
     love.graphics.translate(0, 0)
    

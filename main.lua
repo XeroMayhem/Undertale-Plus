@@ -8,21 +8,23 @@ Plus.States = {
 Plus.LoadedState = nil
 
 function Plus:loadState(state)
+    print(state.." loaded!")
     Plus.LoadedState = state
-    dofile(Plus.States[Plus.LoadedState] ..'.lua')
+    love.filesystem.load(Plus.States[Plus.LoadedState] ..'.lua')()
 end
 
-    local json = require 'engine.libraries.json'
-    local open = io.open
-    local file = open("config.json", "rb")
-    if not file then return nil end
-    local jsonString = file:read "*a"
-    file:close()
+function love.load()
+    
+    love.graphics.setDefaultFilter("nearest", "nearest")
+    print("main".." loaded!")
 
-    local data = json.decode(jsonString)
+    game_data = love.filesystem.load('data.lua')()
+    mod_loaded = 'mods/'.. game_data["mod_dir"]..'/'
+    mod_data = love.filesystem.load(mod_loaded ..'data.lua')()
 
-    if data.mod_hub == false then
+    if game_data.mod_hub == false then
         Plus:loadState('game')
     else
         Plus:loadState('mod_hub')
     end
+end
