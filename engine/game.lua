@@ -277,7 +277,7 @@ function love.update(dt)
             cutsceneReady = true
         end
 
-        colliders = world:queryRectangleArea(player.x, player.y +player.height, player.width, player.height, {'transition'})
+        colliders = world:queryRectangleArea(player.x -player.width/2, player.y -player.height/2, player.width, player.height, {'transition'})
 
         if #colliders > 0 then
             for i, obj in pairs(gameMap.layers["Objects"].objects) do
@@ -338,8 +338,8 @@ function love.draw()
         obj[2]:draw()
     end
 
-    --world:draw()
-    --world:setQueryDebugDrawing(true)
+    world:draw()
+    world:setQueryDebugDrawing(true)
 
     love.graphics.translate(0, 0)
    

@@ -12,8 +12,8 @@ function player:load()
         end
     end
     player.depth = -player.y
-    player.width = 19 *gameScale
-    player.height = 29/2 *gameScale
+    player.width = (19) *gameScale
+    player.height = (38)/2 *gameScale
     player.collider = world:newRectangleCollider(player.x, player.y, player.width, player.height)
     player.collider:setFixedRotation(true)
     player.collider:setCollisionClass('player')
@@ -149,15 +149,16 @@ function player:update(dt)
         end
     end
 
-    player.x = player.collider:getX() -(10 * gameScale)
-    player.y = player.collider:getY() -(15 * gameScale) -(29/4 *gameScale)
+    player.x = player.collider:getX()
+    player.y = player.collider:getY()
     player.depth = -player.collider:getY()
 
 end
 
 function player:draw()
 
-    love.graphics.draw(player.sprite, player.x, player.y, nil, gameScale)
+    love.graphics.draw(player.sprite, player.x, player.y, nil, gameScale, gameScale, player.sprite:getWidth()/2, player.sprite:getHeight() *0.75 )
+    --love.graphics.draw( drawable, x, y, r, sx, sy, ox, oy, kx, ky )
 end
 
 function player:setSprite(sprite)
@@ -176,16 +177,16 @@ end
 function player:setPosition(x, y)
     player.collider:setX(x)
     player.collider:setY(y)
-    player.x = player.collider:getX() -(10 * gameScale)
-    player.y = player.collider:getY() -(15 * gameScale) -(29/4 *gameScale)
+    player.x = player.collider:getX()
+    player.y = player.collider:getY()
     player.depth = -player.collider:getY()
 end
 
 function player:checkDirect(class)
     class = defaultValue(class, {})
     
-    local x = player.x
-    local y = player.y +player.height
+    local x = player.x -player.width/2
+    local y = player.y -player.height/2
     local width = player.width
     local height = player.height
     local colliders = {}

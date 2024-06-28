@@ -22,6 +22,7 @@ input:keypress('z', function()
                 Plus.loaded_mod = loader.mods[loader.modSel]
             else
                 if loader.selectMod == true then
+                    print("Loaded ".. Plus.loaded_mod.." successfully!")
                     mod_loaded = 'mods/'.. Plus.loaded_mod..'/'
                     mod_data = love.filesystem.load(mod_loaded ..'data.lua')()
                     Plus:loadState('game')
@@ -38,30 +39,29 @@ input:keypress('z', function()
 end)
 
 input:keypress('down', function()
-
-    if not loader.selectMod then
-        loader.optionSel = loader.optionSel +1
-        loader.optionSel = math.min(loader.optionSel, #loader.options)
-    elseif loader.selectMod then
-        loader.modSel = loader.modSel +1
-        loader.modSel = math.min(loader.modSel, #loader.mods)
-        Plus.loaded_mod = loader.mods[loader.modSel]
+    if Plus.LoadedState == 'mod_hub' then
+        if not loader.selectMod then
+            loader.optionSel = loader.optionSel +1
+            loader.optionSel = math.min(loader.optionSel, #loader.options)
+        elseif loader.selectMod then
+            loader.modSel = loader.modSel +1
+            loader.modSel = math.min(loader.modSel, #loader.mods)
+            Plus.loaded_mod = loader.mods[loader.modSel]
+        end
     end
-
 end)
 
 input:keypress('up', function()
-
-    if not loader.selectMod then
-        loader.optionSel = loader.optionSel -1
-        loader.optionSel = math.max(loader.optionSel, 1)
-        Plus.loaded_mod = loader.mods[loader.optionSel]
-    elseif loader.selectMod then
-        loader.modSel = loader.modSel -1
-        loader.modSel = math.max(loader.modSel, 1)
-        Plus.loaded_mod = loader.mods[loader.modSel]
+    if Plus.LoadedState == 'mod_hub' then
+        if not loader.selectMod then
+            loader.optionSel = loader.optionSel -1
+            loader.optionSel = math.max(loader.optionSel, 1)
+        elseif loader.selectMod then
+            loader.modSel = loader.modSel -1
+            loader.modSel = math.max(loader.modSel, 1)
+            Plus.loaded_mod = loader.mods[loader.modSel]
+        end
     end
-
 end)
 
 function love.update(dt)

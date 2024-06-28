@@ -39,6 +39,8 @@ function dt:save()
     end
     file:close()
     print("Saved to ".. filename.." successfully!")
+    
+    print("----------------   "..Plus.loaded_mod)
 
 end
 
@@ -78,6 +80,8 @@ function dt:load()
 
         print("Loaded from ".. filename.." successfully!")
     end
+
+    print("----------------   "..Plus.loaded_mod)
 
 end
 
