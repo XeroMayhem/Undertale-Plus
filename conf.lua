@@ -1,5 +1,6 @@
 function love.conf(t)
-    t.console = false
+    t.console = true
+    t.identity = "UNDERTALE_PLUS"
 
     t.window.title = "Undertale+"
     t.window.icon = "icon.png"

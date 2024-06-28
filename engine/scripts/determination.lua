@@ -1,8 +1,10 @@
 local dt = {}
 
 function dt:save()
-    local open = io.open
-    local file = open(mod_loaded .."save.json", "w")
+    local filename = "saves/" ..Plus.loaded_mod ..".json"
+    local file = love.filesystem.newFile(filename)
+    file:open("w")
+    
     if not file then return nil else
         local data = {}
         --player
@@ -36,41 +38,45 @@ function dt:save()
         file:write(json.encode(data))
     end
     file:close()
+    print("Saved to ".. filename.." successfully!")
 
 end
 
 function dt:load()
-    local file = io.open(mod_loaded .."save.json", "r")
-    if not file then return nil end
-    local jsonString = file:read "*a"
-    file:close()
-    
-    local save_data = json.decode(jsonString)
+    local filename = "saves/" ..Plus.loaded_mod ..".json"
 
-    room = save_data.room
-    reset_world()
-    require('engine/scripts/transition'):transition(nil, room)
+    if not love.filesystem.getInfo(filename) then return nil else
+        --file:open("r")
+        local save_data = json.decode(love.filesystem.read(filename))
+        --file:close()
+        
+        room = save_data.room
+        reset_world()
+        require('engine/scripts/transition'):transition(nil, room)
 
-    player:setPosition(save_data.x, save_data.y)
-    player.hp = save_data.hp
-    player.hpmax = save_data.hpmax
-    player.love = save_data.love
-    player.gold = save_data.gold
-    player.exp = save_data.exp
-    inventory:setWeapon(save_data.weapon)
-    inventory:setArmor(save_data.armor)
-    player.gold = save_data.gold
+        player:setPosition(save_data.x, save_data.y)
+        player.hp = save_data.hp
+        player.hpmax = save_data.hpmax
+        player.love = save_data.love
+        player.gold = save_data.gold
+        player.exp = save_data.exp
+        inventory:setWeapon(save_data.weapon)
+        inventory:setArmor(save_data.armor)
+        player.gold = save_data.gold
 
-    overworld_menu.has_cell = save_data.has_cell
+        overworld_menu.has_cell = save_data.has_cell
 
-    for i = 1, #save_data.flag do
-        flag[i] = save_data.flag[i]
-    end
+        for i = 1, #save_data.flag do
+            flag[i] = save_data.flag[i]
+        end
 
-    --Inventory
-    inventory:create()
-    for i, item in pairs(save_data.inventory) do
-        inventory:addItem(item)
+        --Inventory
+        inventory:create()
+        for i, item in pairs(save_data.inventory) do
+            inventory:addItem(item)
+        end
+
+        print("Loaded from ".. filename.." successfully!")
     end
 
 end

@@ -14,12 +14,16 @@ function Plus:loadState(state)
 end
 
 function love.load()
-    
+
+    love.filesystem.createDirectory("mods")
+    love.filesystem.createDirectory("saves")
+
     love.graphics.setDefaultFilter("nearest", "nearest")
     print("main".." loaded!")
 
     game_data = love.filesystem.load('data.lua')()
-    mod_loaded = 'mods/'.. game_data["mod_dir"]..'/'
+    Plus.loaded_mod = game_data["mod_dir"]
+    mod_loaded = 'mods/'.. Plus.loaded_mod..'/'
     mod_data = love.filesystem.load(mod_loaded ..'data.lua')()
 
     if game_data.mod_hub == false then

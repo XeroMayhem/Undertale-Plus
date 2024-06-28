@@ -10,7 +10,7 @@ return {
   tilewidth = 20,
   tileheight = 20,
   nextlayerid = 21,
-  nextobjectid = 95,
+  nextobjectid = 98,
   properties = {},
   tilesets = {
     {
@@ -468,6 +468,19 @@ return {
             ["script"] = "vines",
             ["sprite"] = "no_sprite.png"
           }
+        },
+        {
+          id = 97,
+          name = "save",
+          type = "",
+          shape = "point",
+          x = 60,
+          y = 140,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {}
         }
       }
     },

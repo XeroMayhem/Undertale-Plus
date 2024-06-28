@@ -338,8 +338,8 @@ function love.draw()
         obj[2]:draw()
     end
 
-    world:draw()
-    world:setQueryDebugDrawing(true)
+    --world:draw()
+    --world:setQueryDebugDrawing(true)
 
     love.graphics.translate(0, 0)
    
