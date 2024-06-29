@@ -1,10 +1,3 @@
-function defaultValue(value, new_value)
-    if value == nil then
-        return new_value
-    end
-    return value
-end
-
 local function key_load()
 
     input:keypress('z', function()
@@ -52,22 +45,6 @@ local function key_load()
         end
     
     end)
-
-    input:keypress('s', function()
-
-    
-    end)
-
-end
-
-function draw_box(x, y, width, height, border)
-
-    border = defaultValue(border, 3 *gameScale)
-    
-    love.graphics.rectangle("fill", x, y, width, height)
-    love.graphics.setColor(0, 0, 0)
-    love.graphics.rectangle("fill", x +(border), y +(border), (width -(border *2)), (height -(border *2)))
-    love.graphics.setColor(255, 255, 255)
 
 end
 
@@ -161,101 +138,105 @@ function reset_world()
     world:addCollisionClass('ghost', {ignores = {'player'}})
 end
 
---region load
+local game = {}
+game.loaded = false
 
-    gameScale = 2
-    love.audio.setVolume(1)
-
-    json = require 'engine.libraries.json'
+function game.update(dt)
     
-    --load mods
+    if game.loaded == false then
 
-    flag = {}
-    for i = 1, mod_data.flag_count do
-        table.insert(flag, 0)
+        game.loaded = true
+    
+        gameScale = 2
+        love.audio.setVolume(1)
+    
+        json = require 'engine.libraries.json'
+        
+        --load mods
+    
+        flag = {}
+        for i = 1, mod_data.flag_count do
+            table.insert(flag, 0)
+        end
+    
+        cell = require (mod_loaded ..'scripts.data.cell.cell')
+        cell:init()
+    
+        Event = require 'engine.scripts.events'
+        
+        map_sprite = require 'engine.scripts.map_sprite'
+        instance = require 'engine.scripts.object'
+    
+        input = require 'engine/scripts/input'
+        key_load()
+        font = require 'engine/scripts/font'
+        
+        Textbox = require 'engine/scripts/dialogue'
+        Textbox:init()
+        
+        TransitionIsActive = false
+        TransitionAlpha = 0
+        TransitionMultiplier = 1
+        curTransition = nil
+        
+        overworld_menu = require 'engine/scripts/overworld_menu'
+        overworld_menu:init()
+        overworld_menu.has_cell = true --mod_data.has_cell
+    
+        wf = require 'engine/libraries/windfield'
+        world = wf.newWorld(0, 0)
+        world:addCollisionClass('player')
+        world:addCollisionClass('wall')
+        world:addCollisionClass('instance')
+        world:addCollisionClass('interactable', {ignores = {'player'}})
+        world:addCollisionClass('transition', {ignores = {'player'}})
+        world:addCollisionClass('cutscene', {ignores = {'player'}})
+        world:addCollisionClass('ghost', {ignores = {'player'}})
+    
+        love.window.setTitle("Undertale+")
+        love.window.setMode(320 *gameScale, 240*gameScale)
+    
+        love.graphics.setDefaultFilter("nearest", "nearest")
+    
+        sti = require 'engine/libraries/sti'
+        room = mod_data.map
+        gameMap = sti(mod_loaded ..'scripts/world/maps/' .. room ..'.lua')
+        
+        playerFree = true
+    
+        cutsceneActive = false
+        cutsceneReady = true
+    
+        music = {}
+        music.ruins = love.audio.newSource(mod_loaded ..'assets/music/' .. mod_data.song, "stream")
+    
+        bgMusic = music.ruins
+        bgMusic:setLooping(true)
+    
+        inventory = require 'engine.scripts.inventory'
+        inventory:create()
+    
+        overworld = {}
+        overworld.objects = {}
+        overworld.scripts = require 'engine.scripts.overworld_scripts'
+    
+        player = require 'engine.scripts.player'
+        player:load()
+    
+        camx = 0
+        camy = 0
+        camf = player
+    
+        load_map()
+    
+        bgMusic:play()
+    
+        --load save 
+        determination = require 'engine.scripts.determination'
+        determination:load()
+    
     end
 
-    cell = require (mod_loaded ..'scripts.data.cell.cell')
-    cell:init()
-
-    Event = require 'engine.scripts.events'
-    
-    map_sprite = require 'engine.scripts.map_sprite'
-    instance = require 'engine.scripts.object'
-
-    input = require 'engine/scripts/input'
-    key_load()
-    font = require 'engine/scripts/font'
-    
-    Textbox = require 'engine/scripts/dialogue'
-    Textbox:init()
-    
-    TransitionIsActive = false
-    TransitionAlpha = 0
-    TransitionMultiplier = 1
-    curTransition = nil
-    
-    overworld_menu = require 'engine/scripts/overworld_menu'
-    overworld_menu:init()
-    overworld_menu.has_cell = true --mod_data.has_cell
-
-    wf = require 'engine/libraries/windfield'
-    world = wf.newWorld(0, 0)
-    world:addCollisionClass('player')
-    world:addCollisionClass('wall')
-    world:addCollisionClass('instance')
-    world:addCollisionClass('interactable', {ignores = {'player'}})
-    world:addCollisionClass('transition', {ignores = {'player'}})
-    world:addCollisionClass('cutscene', {ignores = {'player'}})
-    world:addCollisionClass('ghost', {ignores = {'player'}})
-
-    love.window.setTitle("Undertale+")
-    love.window.setMode(320 *gameScale, 240*gameScale)
-
-    love.graphics.setDefaultFilter("nearest", "nearest")
-
-    sti = require 'engine/libraries/sti'
-    room = mod_data.map
-    gameMap = sti(mod_loaded ..'scripts/world/maps/' .. room ..'.lua')
-    
-    playerFree = true
-
-    cutsceneActive = false
-    cutsceneReady = true
-
-    music = {}
-    music.ruins = love.audio.newSource(mod_loaded ..'assets/music/' .. mod_data.song, "stream")
-
-    bgMusic = music.ruins
-    bgMusic:setLooping(true)
-
-    inventory = require 'engine.scripts.inventory'
-    inventory:create()
-
-    overworld = {}
-    overworld.objects = {}
-    overworld.scripts = require 'engine.scripts.overworld_scripts'
-
-    player = require 'engine.scripts.player'
-    player:load()
-
-    camx = 0
-    camy = 0
-    camf = player
-
-    load_map()
-
-    bgMusic:play()
-
-    --load save 
-    determination = require 'engine.scripts.determination'
-    determination:load()
-
---endregion
-
-
-function love.update(dt)
-    
     if playerFree == true then
 
         player:update(dt)
@@ -322,7 +303,7 @@ function love.update(dt)
 
 end
 
-function love.draw()
+function game.draw()
 
     love.graphics.translate(-camx, -camy)
 
@@ -338,7 +319,7 @@ function love.draw()
         obj[2]:draw()
     end
 
-    world:draw()
+    --world:draw()
     world:setQueryDebugDrawing(true)
 
     love.graphics.translate(0, 0)
@@ -382,3 +363,5 @@ function love.draw()
     font:draw('Flag 2: ' ..flag[2], camx, camy +64)
     ]]
 end
+
+return game

@@ -3,7 +3,7 @@ local font = require 'engine/scripts/font'
 
 local loader = {}
 gameScale = 2
-loader.options = {{name = "Load a mod", active = false}, {name = "Open Mods Folder", active = false},
+loader.options = {{name = "Try a mod", active = false}, {name = "Open Mods Folder", active = false},
     {name = "Options", active = false}, {name = "Credits", active = false},
     {name = "Open wiki", active = false}, {name = "Quit", active = false}}
 loader.optionSel = 1
@@ -11,10 +11,11 @@ loader.optionSel = 1
 loader.selectMod = false
 loader.modSel = 1
 loader.mods = love.filesystem.getDirectoryItems("mods")
+loader.modtime = love.filesystem.getInfo('engine/mod_loader.lua').modtime
 
 input:keypress('z', function()
 
-    if Plus.LoadedState == 'mod_hub' then
+    if Plus.LoadedState == 'mod_hub' and Plus.game_last_modified == loader.modtime then
 
         if loader.optionSel == 1 then
             if loader.selectMod == false then
@@ -39,7 +40,7 @@ input:keypress('z', function()
 end)
 
 input:keypress('down', function()
-    if Plus.LoadedState == 'mod_hub' then
+    if Plus.LoadedState == 'mod_hub' and Plus.game_last_modified == loader.modtime then
         if not loader.selectMod then
             loader.optionSel = loader.optionSel +1
             loader.optionSel = math.min(loader.optionSel, #loader.options)
@@ -52,7 +53,7 @@ input:keypress('down', function()
 end)
 
 input:keypress('up', function()
-    if Plus.LoadedState == 'mod_hub' then
+    if Plus.LoadedState == 'mod_hub' and Plus.game_last_modified == loader.modtime then
         if not loader.selectMod then
             loader.optionSel = loader.optionSel -1
             loader.optionSel = math.max(loader.optionSel, 1)
@@ -64,11 +65,11 @@ input:keypress('up', function()
     end
 end)
 
-function love.update(dt)
+function loader.update(dt)
 
 end
 
-function love.draw()
+function loader.draw()
     
     if loader.selectMod == false then
 
@@ -117,3 +118,5 @@ function love.draw()
     end
     
 end
+
+return loader
