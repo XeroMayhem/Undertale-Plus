@@ -3,7 +3,8 @@ Plus = {}
 --Plus.Mods = require("src.engine.mods")
 Plus.States = {
     mod_hub = "engine/mod_loader",
-    game = "engine/game"
+    game = "engine/game",
+    test = "engine/game"
 }
 Plus.LoadedState = nil
 
