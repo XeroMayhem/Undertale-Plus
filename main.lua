@@ -42,17 +42,14 @@ function Plus:reloadState(state)
         end
     end
 
-    if state == 'mod_hub' then
-        load({"optionSel", "selectMod", "modSel"})
-    elseif state == 'game' then
-        load({"loaded"})
-    end
+    load(Plus.trueState.excluded_vars)
 end
 
 function Plus:loadState(state)
     print(state.." loaded!")
     Plus.LoadedState = state
     Plus.trueState = require(Plus.States[Plus.LoadedState]) --love.filesystem.load(Plus.States[Plus.LoadedState] ..'.lua')()
+    Plus.state_last_modified = love.filesystem.getInfo(Plus.States[Plus.LoadedState] ..'.lua').modtime
     Plus.game_last_modified = love.filesystem.getInfo(Plus.States[Plus.LoadedState] ..'.lua').modtime
 end
 
@@ -77,10 +74,11 @@ function love.load()
 end
 
 
+Plus.state_last_modified = 0
 Plus.game_last_modified = 0
 
 function love.update(dt)
-    if love.filesystem.getInfo(Plus.States[Plus.LoadedState] ..'.lua').modtime ~= Plus.game_last_modified then
+    if love.filesystem.getInfo(Plus.States[Plus.LoadedState] ..'.lua').modtime ~= Plus.state_last_modified then
         Plus:reloadState()
     end
     Plus.trueState.update(dt)
