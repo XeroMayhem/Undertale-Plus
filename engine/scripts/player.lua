@@ -56,7 +56,7 @@ function player:load()
         player.sprite = love.graphics.newImage(sprite_file)
     end
 
-    player.name = "Xero"
+    player.name = charname
     player.hp = 1
     player.hpmax = 20--32
     player.at = 10--32

@@ -21,9 +21,12 @@ end
 --Plus.Mods = require("src.engine.mods")
 Plus.States = {
     mod_hub = "engine/mod_loader",
+    title = "engine/mainmenu",
     game = "engine/game"
 }
 Plus.LoadedState = nil
+game_time = 0
+charname = "Chara"
 
 function Plus:reloadState(state)
     
@@ -66,16 +69,15 @@ function love.load()
     mod_loaded = 'mods/'.. Plus.loaded_mod..'/'
     mod_data = love.filesystem.load(mod_loaded ..'data.lua')()
 
-    if game_data.mod_hub == false then
-        Plus:loadState('game')
-    else
-        Plus:loadState('mod_hub')
-    end
+    Plus:loadState(game_data.state)
 end
 
 
 Plus.state_last_modified = 0
 Plus.game_last_modified = 0
+Plus.lastKey = ''
+Plus.keyPress = ''
+gameScale = 2
 
 function love.update(dt)
     if love.filesystem.getInfo(Plus.States[Plus.LoadedState] ..'.lua').modtime ~= Plus.state_last_modified then
@@ -86,4 +88,14 @@ end
 
 function love.draw()
     Plus.trueState.draw()
+    Plus.lastKey = Plus.keyPress
+    Plus.keyPress = ''
+end
+
+function love.keypressed(key)
+
+    if Plus.lastKey ~= key then
+        Plus.keyPress = key
+    end
+    
 end

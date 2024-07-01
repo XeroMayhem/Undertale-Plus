@@ -13,10 +13,13 @@ function dt:save()
         data.hp = player.hp
         data.hpmax = player.hpmax
         data.love = player.love
+        data.name = player.name
         data.gold = player.gold
         data.exp = player.exp
         data.weapon = player.weapon.id
         data.armor = player.armor.id
+
+        data.time = game_time
 
         data.has_cell = overworld_menu.has_cell
 
@@ -48,9 +51,7 @@ function dt:load()
     local filename = "saves/" ..Plus.loaded_mod ..".json"
 
     if not love.filesystem.getInfo(filename) then return nil else
-        --file:open("r")
         local save_data = json.decode(love.filesystem.read(filename))
-        --file:close()
         
         room = save_data.room
         reset_world()
@@ -59,12 +60,14 @@ function dt:load()
         player:setPosition(save_data.x, save_data.y)
         player.hp = save_data.hp
         player.hpmax = save_data.hpmax
+        player.name = save_data.name
         player.love = save_data.love
         player.gold = save_data.gold
         player.exp = save_data.exp
         inventory:setWeapon(save_data.weapon)
         inventory:setArmor(save_data.armor)
         player.gold = save_data.gold
+        game_time = save_data.time
 
         overworld_menu.has_cell = save_data.has_cell
 

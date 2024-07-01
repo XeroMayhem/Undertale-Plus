@@ -142,12 +142,13 @@ local game = {}
 game.loaded = false
 
 function game.update(dt)
+
+    game_time = game_time +1
     
-    if game.loaded == false then
+    if game.loaded == false then 
 
         game.loaded = true
     
-        gameScale = 2
         love.audio.setVolume(1)
     
         json = require 'engine.libraries.json'
@@ -159,7 +160,7 @@ function game.update(dt)
             table.insert(flag, 0)
         end
     
-        cell = require (mod_loaded ..'scripts.data.cell.cell')
+        cell = require(mod_loaded ..'scripts/data/cell/cell')
         cell:init()
     
         Event = require 'engine.scripts.events'
@@ -192,9 +193,6 @@ function game.update(dt)
         world:addCollisionClass('transition', {ignores = {'player'}})
         world:addCollisionClass('cutscene', {ignores = {'player'}})
         world:addCollisionClass('ghost', {ignores = {'player'}})
-    
-        love.window.setTitle("Undertale+")
-        love.window.setMode(320 *gameScale, 240*gameScale)
     
         love.graphics.setDefaultFilter("nearest", "nearest")
     
@@ -320,7 +318,7 @@ function game.draw()
     end
 
     --world:draw()
-    world:setQueryDebugDrawing(true)
+    --world:setQueryDebugDrawing(true)
 
     love.graphics.translate(0, 0)
    
@@ -357,11 +355,8 @@ function game.draw()
         love.graphics.rectangle("fill", camx, camy, 640, 480)
         love.graphics.setColor(255, 255, 255, 1)
     end
-    --[[
     font:draw(player.hp .. '/' ..player.hpmax, camx, camy)
-    font:draw('Flag 1: ' ..flag[1], camx, camy +32)
-    font:draw('Flag 2: ' ..flag[2], camx, camy +64)
-    ]]
 end
 
+game.excluded_vars = {"loaded"}
 return game

@@ -2,7 +2,6 @@ local input = require 'engine/scripts/input'
 local font = require 'engine/scripts/font'
 
 local loader = {}
-gameScale = 2
 loader.options = {{name = "Play a mod", active = false}, {name = "Open Mods Folder", active = false},
     {name = "Options", active = false}, {name = "Credits", active = false},
     {name = "Open wiki", active = false}, {name = "Quit", active = false}}
@@ -26,7 +25,8 @@ input:keypress('z', function()
                     print("Loaded ".. Plus.loaded_mod.." successfully!")
                     mod_loaded = 'mods/'.. Plus.loaded_mod..'/'
                     mod_data = love.filesystem.load(mod_loaded ..'data.lua')()
-                    Plus:loadState('game')
+                    love.window.setTitle(mod_data.name)
+                    Plus:loadState('title')
                 end
             end
         elseif loader.optionSel == 2 then

@@ -13,6 +13,10 @@ function input:keypress(keyp, onpress)
             end
         end
 
+        if Plus.lastKey ~= key then
+            Plus.keyPress = key
+        end
+
     end
 
 end
