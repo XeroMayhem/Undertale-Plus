@@ -70,7 +70,7 @@ function menu.draw()
             menu.part = 1.5
         end
 
-        if Plus.keyPress == 'z' then
+        if Plus.keyPress == 'z' and timer > 1 then
             intronoise:stop()
             menu.song:setLooping(true)
             menu.song:play()

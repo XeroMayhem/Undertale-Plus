@@ -1,5 +1,7 @@
 Plus = {}
 
+local json = require 'engine.libraries.json'
+
 function defaultValue(value, new_value)
     if value == nil then
         return new_value
@@ -51,7 +53,7 @@ end
 function Plus:loadState(state)
     print(state.." loaded!")
     Plus.LoadedState = state
-    Plus.trueState = require(Plus.States[Plus.LoadedState]) --love.filesystem.load(Plus.States[Plus.LoadedState] ..'.lua')()
+    Plus.trueState = require(Plus.States[Plus.LoadedState])
     Plus.state_last_modified = love.filesystem.getInfo(Plus.States[Plus.LoadedState] ..'.lua').modtime
     Plus.game_last_modified = love.filesystem.getInfo(Plus.States[Plus.LoadedState] ..'.lua').modtime
 end
@@ -64,10 +66,10 @@ function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
     print("main".." loaded!")
 
-    game_data = love.filesystem.load('data.lua')()
+    game_data = json.decode(love.filesystem.read('data.json'))
     Plus.loaded_mod = game_data["mod_dir"]
     mod_loaded = 'mods/'.. Plus.loaded_mod..'/'
-    mod_data = love.filesystem.load(mod_loaded ..'data.lua')()
+    mod_data = json.decode(love.filesystem.read(mod_loaded ..'data.json'))
 
     Plus:loadState(game_data.state)
 end

@@ -1,5 +1,6 @@
 local input = require 'engine/scripts/input'
 local font = require 'engine/scripts/font'
+local json = require 'engine.libraries.json'
 
 local loader = {}
 loader.options = {{name = "Play a mod", active = false}, {name = "Open Mods Folder", active = false},
@@ -22,9 +23,11 @@ input:keypress('z', function()
                 Plus.loaded_mod = loader.mods[loader.modSel]
             else
                 if loader.selectMod == true then
+                    Plus.keyPress = ''
+                    Plus.lastKey = ''
                     print("Loaded ".. Plus.loaded_mod.." successfully!")
                     mod_loaded = 'mods/'.. Plus.loaded_mod..'/'
-                    mod_data = love.filesystem.load(mod_loaded ..'data.lua')()
+                    mod_data = json.decode(love.filesystem.read(mod_loaded .."data.json"))
                     love.window.setTitle(mod_data.name)
                     Plus:loadState('title')
                 end
@@ -110,11 +113,14 @@ function loader.draw()
                 sprite = love.graphics.newImage('assets/sprites/player/soul_menu.png')
                 love.graphics.draw(sprite, (x -12) *gameScale, (y +(gap *(i -1))) *gameScale, nil, 1, 1)
             end
-            font:draw(loader.mods[i], x *gameScale, ((y -4) +((i -1) *gap))*gameScale)
+            local mod_name = json.decode(love.filesystem.read("mods/" ..loader.mods[i] .."/data.json")).name
+            font:draw(mod_name, x *gameScale, ((y -4) +((i -1) *gap))*gameScale)
         end
-        sprite = love.graphics.newImage('assets/sprites/player/soul_menu.png')
-        love.graphics.draw(sprite, 260, 240 +120, nil, 1, 1)
-        font:draw({{255, 255, 0, 1}, "Start"}, 280, 232 +120)
+        --[[
+            sprite = love.graphics.newImage('assets/sprites/player/soul_menu.png')
+            love.graphics.draw(sprite, 260, 240 +120, nil, 1, 1)
+            font:draw({{255, 255, 0, 1}, "Start"}, 280, 232 +120)
+        ]]
     end
     
 end
