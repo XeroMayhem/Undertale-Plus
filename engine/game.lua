@@ -20,7 +20,7 @@ local function key_load()
                             local script = 'engine/scripts/transition'
                             local event = require(script)
                         elseif string.sub(obj.name, 1, 10) == "save" then
-                            determination:save()
+                            SaveMenu:create()
                         else
                             local script = mod_loaded ..'scripts/world/events/' ..obj.name
                             local event = require(script)
@@ -171,6 +171,9 @@ function game.update(dt)
         input = require 'engine/scripts/input'
         key_load()
         font = require 'engine/scripts/font'
+
+        SaveMenu = require 'engine/scripts/save_menu'
+        SaveMenu:init()
         
         Textbox = require 'engine/scripts/dialogue'
         Textbox:init()
@@ -328,6 +331,10 @@ function game.draw()
 
     if overworld_menu.active == true then
         overworld_menu:draw()
+    end
+
+    if SaveMenu.isActive == true then
+        SaveMenu:draw()
     end
 
     if Textbox.isActive == true then

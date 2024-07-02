@@ -42,7 +42,7 @@ input:keypress('z', function()
 
 end)
 
-input:keypress('down', function()
+input:keypress('right', function()
     if Plus.LoadedState == 'mod_hub' and Plus.state_last_modified == loader.modtime then
         if not loader.selectMod then
             loader.optionSel = loader.optionSel +1
@@ -55,7 +55,7 @@ input:keypress('down', function()
     end
 end)
 
-input:keypress('up', function()
+input:keypress('left', function()
     if Plus.LoadedState == 'mod_hub' and Plus.state_last_modified == loader.modtime then
         if not loader.selectMod then
             loader.optionSel = loader.optionSel -1
@@ -109,12 +109,20 @@ function loader.draw()
             local x = 40
             local y = 40
             local gap = 16
+            local mod_info = json.decode(love.filesystem.read("mods/" ..loader.mods[i] .."/data.json"))
+            local mod_name = json.decode(love.filesystem.read("mods/" ..loader.mods[i] .."/data.json")).name
             if i == loader.modSel then
                 sprite = love.graphics.newImage('assets/sprites/player/soul_menu.png')
-                love.graphics.draw(sprite, (x -12) *gameScale, (y +(gap *(i -1))) *gameScale, nil, 1, 1)
+                --love.graphics.draw(sprite, (x -12) *gameScale, (y +(gap *(i -1))) *gameScale, nil, 1, 1)
+
+                local size = 32
+                font:setFont('main.ttf', size)
+                font:draw_centred(mod_info.name, 320, 240 -(size))
+
+                font:setFont('small.ttf', 5)
+                font:draw_centred({{255, 255, 255, 0.5}, mod_info.creator_tag}, 320, 464)
             end
-            local mod_name = json.decode(love.filesystem.read("mods/" ..loader.mods[i] .."/data.json")).name
-            font:draw(mod_name, x *gameScale, ((y -4) +((i -1) *gap))*gameScale)
+            --font:draw(mod_name, x *gameScale, ((y -4) +((i -1) *gap))*gameScale)
         end
         --[[
             sprite = love.graphics.newImage('assets/sprites/player/soul_menu.png')
