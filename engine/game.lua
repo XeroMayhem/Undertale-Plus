@@ -362,7 +362,6 @@ function game.draw()
         love.graphics.rectangle("fill", camx, camy, 640, 480)
         love.graphics.setColor(255, 255, 255, 1)
     end
-    font:draw(player.hp .. '/' ..player.hpmax, camx, camy)
 end
 
 game.excluded_vars = {"loaded"}

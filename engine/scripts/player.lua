@@ -62,9 +62,9 @@ function player:load()
     player.at = 10--32
     player.df = 10--32
     player.weapon = nil
-    inventory:setWeapon('big_shot')
+    inventory:setWeapon(mod_data.start_weapon)
     player.armor = nil
-    inventory:setArmor('fur_armour')
+    inventory:setArmor(mod_data.start_armor)
     player.love = 1
     player.gold = 0
     player.exp = 0

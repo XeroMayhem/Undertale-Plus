@@ -1,5 +1,6 @@
 local input = require 'engine/scripts/input'
 local font = require 'engine/scripts/font'
+local json = require 'engine.libraries.json'
 
 local menu = {}
 menu.part = 1
@@ -120,7 +121,15 @@ function menu.draw()
         love.graphics.setColor(255, 255, 255, 1)
 
         if Plus.keyPress == 'z' then
-            menu.part = 3
+            local set_name = json.decode(love.filesystem.read(mod_loaded .."data.json")).chara_name
+            if set_name == "" then
+                menu.part = 3
+            else
+                charname = set_name
+                menu.song:stop()
+                love.audio.newSource('assets/sounds/mus_cymbal.ogg', "static"):play()
+                menu.part = 5.5
+            end
         end
     
     elseif menu.part == 3 then
@@ -292,7 +301,34 @@ function menu.draw()
         if menu.fade >= 1 then
             Plus:loadState('game')
         end
+    elseif menu.part == 5.5 then
 
+        love.graphics.setColor(255, 255, 255, 0.75)
+
+        font:setFont('main.ttf', 16)
+        font:draw(" --- Instruction ---", 170, 40)
+        font:draw("[Z or ENTER] Confirm", 170, 100)
+        font:draw("[X or SHIFT] Cancel", 170, 140)
+        font:draw("[C or CTRL] Menu (In-game)", 170, 180)
+        font:draw("[F4] Fullscreen", 170, 220)
+        font:draw("[Hold ESC] Quit", 170, 260)
+        font:draw("When HP is 0, you lose.", 170, 300)
+        
+        font:setFont('small.ttf', 6)
+        font:draw_centred({{255, 255, 255, 0.5}, mod_data.creator_tag}, 320, 464)
+
+        love.graphics.setColor(255, 255, 255, 1)
+
+        menu.fade = menu.fade +0.003
+
+        love.graphics.setColor(255, 255, 255, menu.fade)
+        love.graphics.rectangle("fill", 0, 0, 640, 480)
+
+        if menu.fade >= 1 then
+            Plus:loadState('game')
+        end
+
+    
     elseif menu.part == 6 then
 
         local menu_bg = love.graphics.newImage('assets/sprites/misc/main_menu.png')

@@ -71,7 +71,10 @@ function menu:draw()
         end
         
         local json = require 'engine.libraries.json'
-        local save_data = json.decode(love.filesystem.read("saves/" ..Plus.loaded_mod ..".json"))
+        local save_data = {name = "EMPTY", love = 0, time = 0, }
+        if love.filesystem.getInfo("saves/" ..Plus.loaded_mod ..".json") then
+            save_data = json.decode(love.filesystem.read("saves/" ..Plus.loaded_mod ..".json"))
+        end
 
         font:draw(save_data.name, camx +140, camy +146)
         font:draw_centred("LV " ..save_data.love, camx +320, camy +146)
@@ -87,9 +90,12 @@ function menu:draw()
         end
         font:draw(time, camx +500-love.graphics.getFont():getWidth(time), camy +146)
 
-        local room_name = require (mod_loaded ..'scripts/world/rooms')
-        font:draw(room_name:getName(save_data.room), camx +140, camy +182)
-
+        if love.filesystem.getInfo("saves/" ..Plus.loaded_mod ..".json") then
+            local room_name = require (mod_loaded ..'scripts/world/rooms')
+            font:draw(room_name:getName(save_data.room), camx +140, camy +182)
+        else
+            font:draw("--", camx +140, camy +182)
+        end
         love.graphics.setColor(255, 255, 255, 1)
     end
 end
