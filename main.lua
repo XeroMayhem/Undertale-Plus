@@ -1,6 +1,7 @@
 Plus = {}
+math.randomseed(os.time())
 
-local json = require 'engine.libraries.json'
+json = require 'engine.libraries.json'
 
 function defaultValue(value, new_value)
     if value == nil then
@@ -24,7 +25,8 @@ end
 Plus.States = {
     mod_hub = "engine/mod_loader",
     title = "engine/mainmenu",
-    game = "engine/game"
+    game = "engine/game",
+    battle = "engine/battle"
 }
 Plus.LoadedState = nil
 game_time = 0
@@ -82,10 +84,12 @@ Plus.keyPress = ''
 gameScale = 2
 
 function love.update(dt)
+    math.randomseed(os.time())
     if love.filesystem.getInfo(Plus.States[Plus.LoadedState] ..'.lua').modtime ~= Plus.state_last_modified then
         Plus:reloadState()
     end
     Plus.trueState.update(dt)
+
 end
 
 function love.draw()

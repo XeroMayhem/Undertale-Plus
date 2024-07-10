@@ -70,7 +70,7 @@ function menu:draw()
             font:draw("Return", camx +350, camy +248)
         end
         
-        local json = require 'engine.libraries.json'
+        
         local save_data = {name = "EMPTY", love = 0, time = 0, }
         if love.filesystem.getInfo("saves/" ..Plus.loaded_mod ..".json") then
             save_data = json.decode(love.filesystem.read("saves/" ..Plus.loaded_mod ..".json"))

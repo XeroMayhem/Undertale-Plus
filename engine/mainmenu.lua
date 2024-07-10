@@ -1,6 +1,6 @@
 local input = require 'engine/scripts/input'
 local font = require 'engine/scripts/font'
-local json = require 'engine.libraries.json'
+
 
 local menu = {}
 menu.part = 1
@@ -343,7 +343,7 @@ function menu.draw()
         
         font:setFont('main.ttf', 16)
         
-        local json = require 'engine.libraries.json'
+        
         local save_data = json.decode(love.filesystem.read("saves/" ..Plus.loaded_mod ..".json"))
 
         font:draw(save_data.name, 140, 124)

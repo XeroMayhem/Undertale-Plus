@@ -25,6 +25,11 @@ function cell:init()
         Textbox:pageParams("* Ring...")
         Textbox:pageParams("* Ribbit Ribbit^* (You're welcome.)")
     end}
+    cell.calls[5] = {name = "Call Suzy", call = function()
+        Textbox:create()
+        Textbox:pageParams("* Dialing...")
+        Textbox:pageParams("* (It went straight to voicemail.)")
+    end}
 end
 
 function cell:getCellList()

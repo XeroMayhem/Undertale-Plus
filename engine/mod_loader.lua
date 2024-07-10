@@ -1,6 +1,6 @@
 local input = require 'engine/scripts/input'
 local font = require 'engine/scripts/font'
-local json = require 'engine.libraries.json'
+
 
 local loader = {}
 loader.options = {{name = "Play a mod", active = false}, {name = "Open Mods Folder", active = false},

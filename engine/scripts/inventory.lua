@@ -38,7 +38,7 @@ function inventory:useItem(id)
         end
         finText = "* You equipped the ".. item.name.."."
     elseif item.type == "def" then
-        local prev = player.armor
+        local prev = player.armor.id
         inventory:setArmor(item.id)
         if prev ~= "" then
             inventory:addItem(prev)
