@@ -3,6 +3,14 @@ math.randomseed(os.time())
 
 json = require 'engine.libraries.json'
 
+function table.shuffle(list)
+    for i = #list, 2, -1 do
+        local j = math.random(i)
+        list[i], list[j] = list[j], list[i]
+      end
+    return list
+end
+
 function defaultValue(value, new_value)
     if value == nil then
         return new_value
@@ -21,7 +29,6 @@ function draw_box(x, y, width, height, border)
 
 end
 
---Plus.Mods = require("src.engine.mods")
 Plus.States = {
     mod_hub = "engine/mod_loader",
     title = "engine/mainmenu",

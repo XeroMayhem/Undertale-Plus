@@ -1,23 +1,24 @@
 local input = require 'engine/scripts/input'
 local font = require 'engine/scripts/font'
 local writer = require 'engine.scripts.text_writer'
-local enemy_list = 'mods.testmod.scripts.battle.enemies.'
 enemy_scripts = require 'engine.scripts.enemy'
 
 bgMusic:stop()
 
-local bt = {}
+bt = {}
 bt.soul = {x = 40, y = 446, sprite = 'assets/sprites/ui/battle/spr_soul.png', script = 'engine.scripts.soul'}
 bt.enemy = {}
+bt.spared_enemy = {}
 
 bt.box = {}
-bt.box.update = 0
+bt.box.border = 5
 bt.box.width = 575
 bt.box.height = 140
 bt.box.cur_width = 0
 bt.box.cur_height = 140
-bt.song = love.audio.newSource('assets/sounds/mus_menu0.ogg', "stream")
---bt.song:play()
+bt.song = love.audio.newSource('assets/sounds/enemy_approaching.ogg', "stream")
+bt.song:setLooping(true)
+bt.song:play()
 
 bt.ftext = ""
 bt.ft_pos = 0
@@ -30,7 +31,11 @@ bt.main = {
     },
     act = {
         active = false,
-        sel = 1
+        sel = 1,
+        selecting_act = false,
+        act_sel = 1,
+        acting = false,
+        page = 1
     },
     item = {
         active = false,
@@ -47,26 +52,11 @@ bt.main = {
 
 bt.ismain = true
 bt.enemy_turn = false
+bt.turn = 1
+bt.turn_timer = 0
+bt.turn_time = 3
 
-function bt.encounter(list)
-
-    print(list)
-    if list == 1 then
-        bt.enemy[1] = require(enemy_list .. 'froggit')
-        bt.enemy[1].x = 640/2
-        bt.ftext = "* Froggit hopped close!"
-    elseif list == 2 then
-        bt.enemy[1] = require(enemy_list .. 'whimsun')
-        bt.enemy[1].x = 640/2
-        bt.ftext = "* Whimsun approached meekly!"
-    elseif list == 3 then
-        bt.enemy[1] = require(enemy_list .. 'froggit')
-        bt.enemy[2] = require(enemy_list .. 'whimsun')
-        bt.ftext = "* Froggit and Whimsun drew near!"
-    end
-
-end
-bt.encounter(3)--math.random(1, 3))
+require(mod_loaded ..'scripts.battle.encounters')()
 
 function bt.update(dt)
 
@@ -138,26 +128,85 @@ function bt.update(dt)
         bt.main.fight.sel = math.min(bt.main.fight.sel, #bt.enemy)
 
     elseif bt.main.act.active == true then
-        
-        if Plus.keyPress == 'x' then
-            bt.main.act.active = false
-        end
 
-        if Plus.keyPress == 'z' then
+        if bt.main.act.selecting_act == false then
+        
+            if Plus.keyPress == 'x' then
+                bt.main.act.active = false
+            end
+
+            if Plus.keyPress == 'z' then
+                bt.main.act.selecting_act = true
+            end
+
+            if Plus.keyPress == 'down' then
+                bt.main.act.sel = bt.main.act.sel +1
+            end
+
+            if Plus.keyPress == 'up' then
+                bt.main.act.sel = bt.main.act.sel -1
+            end
             
-        end
+            bt.main.act.sel = math.max(bt.main.act.sel, 1)
+            bt.main.act.sel = math.min(bt.main.act.sel, #bt.enemy)
+        elseif bt.main.act.acting == false then
 
-        if Plus.keyPress == 'down' then
-            bt.main.act.sel = bt.main.act.sel +1
-        end
+            if Plus.keyPress == 'x' then
+                bt.main.act.selecting_act = false
+            end
 
-        if Plus.keyPress == 'up' then
-            bt.main.act.sel = bt.main.act.sel -1
-        end
+            if Plus.keyPress == 'z' then
+                bt.main.act.acting = true
+            end
 
-        
-        bt.main.act.sel = math.max(bt.main.act.sel, 1)
-        bt.main.act.sel = math.min(bt.main.act.sel, #bt.enemy)
+            if Plus.keyPress == 'up' then
+                if 0 < bt.main.act.act_sel -2 then
+                    bt.main.act.act_sel = bt.main.act.act_sel -2
+                end
+            end
+
+            if Plus.keyPress == 'down' then
+                if #bt.enemy[bt.main.act.sel].acts >= bt.main.act.act_sel +2 then
+                    bt.main.act.act_sel = bt.main.act.act_sel +2
+                end
+            end
+
+            if Plus.keyPress == 'left' then
+                if bt.main.act.act_sel == 1 then
+                    bt.main.act.act_sel = 2
+                elseif bt.main.act.act_sel == 2 then
+                    bt.main.act.act_sel = 1
+                elseif bt.main.act.act_sel == 3 then
+                    bt.main.act.act_sel = 4
+                elseif bt.main.act.act_sel == 4 then
+                    bt.main.act.act_sel = 3
+                elseif bt.main.act.act_sel == 5 then
+                    bt.main.act.act_sel = 6
+                elseif bt.main.act.act_sel == 6 then
+                    bt.main.act.act_sel = 5
+                end
+            end
+
+            if Plus.keyPress == 'right' then
+                if bt.main.act.act_sel == 1 then
+                    bt.main.act.act_sel = 2
+                elseif bt.main.act.act_sel == 2 then
+                    bt.main.act.act_sel = 1
+                elseif bt.main.act.act_sel == 3 then
+                    bt.main.act.act_sel = 4
+                elseif bt.main.act.act_sel == 4 then
+                    bt.main.act.act_sel = 3
+                elseif bt.main.act.act_sel == 5 then
+                    bt.main.act.act_sel = 6
+                elseif bt.main.act.act_sel == 6 then
+                    bt.main.act.act_sel = 5
+                end
+            end
+
+            
+            bt.main.act.act_sel = math.max(bt.main.act.act_sel, 1)
+            bt.main.act.act_sel = math.min(bt.main.act.act_sel, #bt.enemy[bt.main.act.sel].acts)
+        end
 
     elseif bt.main.item.active == true then
         
@@ -309,7 +358,29 @@ function bt.update(dt)
         end
 
         if Plus.keyPress == 'z' then
-            
+            if bt.main.mercy.options[bt.main.mercy.sel] == "* Spare" then
+                local play_sound = false
+                for e = 1, #bt.enemy do
+                    if bt.enemy[e].spare == true then
+                        play_sound = true
+                        bt.enemy[e].been_spared = true
+                        for w = 0, bt.enemy[e].sprite:getWidth() -1 do
+                            bt.enemy[e].pixel_data[w] = {}
+                            for h = 0, bt.enemy[e].sprite:getHeight() -1 do
+                        
+                                bt.enemy[e].pixel_data[w][h] = {col = bt.enemy[e].sprite_data:getPixel(w, h), x = w, y = h, a = 0.5}
+                                
+                            end
+                        end
+                        table.insert(bt.spared_enemy, bt.enemy[e])
+                        table.remove(bt.enemy, e)
+                    end
+                    if play_sound == true then
+                        love.audio.newSource('assets/sounds/snd_vaporized.wav', "static"):play()
+                    end
+                    bt:start_waves()
+                end
+            end
         end
 
         if Plus.keyPress == 'down' then
@@ -327,6 +398,31 @@ function bt.update(dt)
     elseif bt.enemy_turn == true then
         local soul_script = require(bt.soul.script)
         soul_script:update(bt.soul)
+        bt.turn_timer = bt.turn_timer +1
+        for e = 1, #bt.enemy do
+            if bt.enemy_turn == true then
+                for b = 1, #bt.enemy[e].bullets do
+                    bt.enemy[e].bullets[b]:update(dt)
+                    bt.enemy[e].bullets[b]:check_hit()
+                end
+            end
+            bt.enemy[e].wave:update(dt)
+        end
+        if bt.turn_timer >= bt.turn_time * 60 then
+            for e = 1, #bt.enemy do
+                for b = 1, #bt.enemy[e].bullets do
+
+                end
+                bt.enemy[e].bullets = {}
+            end
+            bt.enemy_turn = false
+            bt.turn_timer = 0
+            bt:set_box(575, 140)
+            bt.soul.x = 40
+            bt.soul.y = 446
+            bt.main_sel = 1
+            bt.turn = bt.turn +1
+        end
     end
     
     if bt.box.cur_width < bt.box.width then
@@ -343,11 +439,15 @@ function bt.update(dt)
         bt.box.cur_height = bt.box.cur_height -((bt.box.cur_height- bt.box.height) /2);
     end
 
+    for e = 1, #bt.enemy do
+        bt.enemy[e]:update(dt)
+    end
+
 end
 
 function bt.draw()
 
-    draw_box(320 -(bt.box.cur_width/2), 320 -(bt.box.cur_height/2), bt.box.cur_width, bt.box.cur_height, 5)
+    draw_box(320 -(bt.box.cur_width/2), 320 -(bt.box.cur_height/2), bt.box.cur_width, bt.box.cur_height, bt.box.border)
 
     font:setFont("8bit.ttf", 6)
     font:draw("HP ", 244, 405)
@@ -399,19 +499,48 @@ function bt.draw()
 
     if bt.main.fight.active == true then
         for e = 1, #bt.enemy do
+            if bt.enemy[e].spare == true then love.graphics.setColor(255, 255, 0, 1) end
             font:draw("* "..bt.enemy[e].name, 52 +48, 270 +((e -1) *32))
+            love.graphics.setColor(255, 255, 255, 1)
             if bt.main.fight.sel == e then
                 sprite = love.graphics.newImage(bt.soul.sprite)
                 love.graphics.draw(sprite, 52 +24-9, 277 +((e -1) *32))
             end
         end
     elseif bt.main.act.active == true then
-        for e = 1, #bt.enemy do
-            font:draw("* "..bt.enemy[e].name, 52 +48, 270 +((e -1) *32))
-            if bt.main.act.sel == e then
-                sprite = love.graphics.newImage(bt.soul.sprite)
-                love.graphics.draw(sprite, 52 +24-9, 277 +((e -1) *32))
+        if bt.main.act.selecting_act == false then
+            for e = 1, #bt.enemy do
+                if bt.enemy[e].spare == true then love.graphics.setColor(255, 255, 0, 1) end
+                font:draw("* "..bt.enemy[e].name, 52 +48, 270 +((e -1) *32))
+                love.graphics.setColor(255, 255, 255, 1)
+                if bt.main.act.sel == e then
+                    sprite = love.graphics.newImage(bt.soul.sprite)
+                    love.graphics.draw(sprite, 52 +24-9, 277 +((e -1) *32))
+                end
             end
+        elseif bt.main.act.acting == false then
+            for a = 1, #bt.enemy[bt.main.act.sel].acts do
+                --[[
+                font:draw("* "..bt.enemy[bt.main.act.sel].acts[a], 52 +48, 270 +((a -1) *32))
+                if bt.main.act.act_sel == a then
+                    sprite = love.graphics.newImage(bt.soul.sprite)
+                    love.graphics.draw(sprite, 52 +24-9, 277 +((a -1) *32))
+                end
+                ]]
+                local y = a
+                local offset = 0
+                y = math.ceil(a/2)
+                if a == 2 or a == 4 then
+                    offset = 280
+                end
+                font:draw("* "..bt.enemy[bt.main.act.sel].acts[a], 52 +48 +offset, 270 +((y -1) *32))
+                if bt.main.act.act_sel == a then
+                    sprite = love.graphics.newImage(bt.soul.sprite)
+                    love.graphics.draw(sprite, 52 +24-9 +offset, 277 +((y -1) *32))
+                end
+            end
+        else
+            bt.enemy[bt.main.act.sel]:act(bt.enemy[bt.main.act.sel].acts[bt.main.act.act_sel])
         end
     elseif bt.main.item.active == true then
         if bt.main.item.using == false then
@@ -450,7 +579,13 @@ function bt.draw()
         end
     elseif bt.main.mercy.active == true then
         for m = 1, #bt.main.mercy.options do
+            if bt.main.mercy.options[m] == "* Spare" then
+                for e = 1, #bt.enemy do
+                    if bt.enemy[e].spare == true then love.graphics.setColor(255, 255, 0, 1) end
+                end
+            end
             font:draw(bt.main.mercy.options[m], 52 +48, 270 +((m -1) *32))
+            love.graphics.setColor(255, 255, 255, 1)
             if bt.main.mercy.sel == m then
                 sprite = love.graphics.newImage(bt.soul.sprite)
                 love.graphics.draw(sprite, 52 +24-9, 277 +((m -1) *32))
@@ -459,23 +594,43 @@ function bt.draw()
     end
 
     for e = 1, #bt.enemy do
-        enemy_scripts:draw(bt.enemy[e])
+        bt.enemy[e]:draw()
+        if bt.enemy_turn == true then
+            for b = 1, #bt.enemy[e].bullets do
+                bt.enemy[e].bullets[b]:draw()
+            end
+        end
         --[[
         font:draw(bt.enemy[e].name ..' HP: ' ..bt.enemy[e].stats.hp ..' AT: ' ..bt.enemy[e].stats.at 
         ..' DF: ' ..bt.enemy[e].stats.df  ..' XP: ' ..bt.enemy[e].stats.xp  ..' Gold: ' ..bt.enemy[e].stats.gold
         , 10, 380 +(32 *(e -1)))
         ]]
     end
+    for e = 1, #bt.spared_enemy do
+        bt.spared_enemy[e]:draw()
+    end
 
     if bt.enemy_turn == true then
-        sprite = love.graphics.newImage(bt.soul.sprite)
         love.graphics.draw(sprite, bt.soul.x, bt.soul.y)
     end
 
 end
 
 function bt:displayMsg(msg)
-    writer:create(msg:sub(1, math.floor(bt.ft_pos)), 52, 270, 535)
+    if Plus.keyPress == 'x' then
+        bt.ft_pos = #msg
+    end
+
+    if bt.ismain == false and Plus.keyPress == 'z' then
+        if bt.ft_pos >= #msg then
+            if bt.main.act.active == true and bt.main.act.selecting_act == true then
+                bt.main.act.page = bt.main.act.page +1
+            end
+            bt.ft_pos = 0
+            return nil
+        end
+    end
+    writer:create(msg, 52, 270, 535, bt.ft_pos)
     bt.ft_pos = bt.ft_pos +0.5
     if bt.ft_pos > #msg then
         bt.ft_pos = #msg
@@ -491,12 +646,17 @@ end
 
 function bt:start_waves()
     bt.enemy_turn = true
+    bt.main_sel = -1
 
     bt.main.fight.active = false
-    bt.main.fight.sel = 1
+    bt.main.fight.sel = 0
 
     bt.main.act.active = false
     bt.main.act.sel = 1
+    bt.main.act.selecting_act = false
+    bt.main.act.act_sel = 1
+    bt.main.act.acting = false
+    bt.main.act.page = 1
 
     bt.main.item.active = false
     bt.main.item.sel = 1
@@ -508,8 +668,18 @@ function bt:start_waves()
 
     bt:set_box(140, 140)
     bt.soul.x = 311
-    bt.soul.y = 311
+    bt.soul.y = 311        
+    for e = 1, #bt.enemy do
+        bt.enemy[e]:attacks()
+        bt.enemy[e].wave:create()
+    end
 
+end
+
+function bt:turn_length(time)
+    if bt.turn_time < time then
+        bt.turn_time = time
+    end
 end
 
 bt.excluded_vars = {'enemy', 'main', 'main_sel', 'ismain', 'ftext'}

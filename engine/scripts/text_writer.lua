@@ -1,10 +1,11 @@
 local dialogue = {}
 
-function dialogue:create(text, x, y, length)
+function dialogue:create(text, x, y, length, pos)
     
     dialogue.text = text
     dialogue.x = x
     dialogue.y = y
+    dialogue.pos = defaultValue(pos, #dialogue.text)
 
     dialogue.lineWidth = length
     dialogue.linebreak = {}
@@ -90,8 +91,7 @@ function dialogue:create(text, x, y, length)
     end
 
     font:setFont("main.ttf", 16)
-    print()
-    for c = 1, dialogue.text_length, 1 do
+    for c = 1, dialogue.pos, 1 do
         font:draw({dialogue.char[c].col, dialogue.char[c].char}, dialogue.x +dialogue.char[c].x, dialogue.y +dialogue.char[c].y)
     end
 

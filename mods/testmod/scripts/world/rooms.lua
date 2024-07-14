@@ -8,4 +8,10 @@ function rooms:getName(room)
     end
 end
 
+function rooms:get_area(room)
+    if room == "Ruins01" or room == "Ruins02" or room == "Ruins03" or room == "RuinsTestMap" then
+        return "Ruins"
+    end
+end
+
 return rooms
