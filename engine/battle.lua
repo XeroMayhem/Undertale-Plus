@@ -3,12 +3,11 @@ local font = require 'engine/scripts/font'
 local writer = require 'engine.scripts.text_writer'
 enemy_scripts = require 'engine.scripts.enemy'
 
-bgMusic:stop()
-
 bt = {}
 bt.soul = {x = 40, y = 446, sprite = 'assets/sprites/ui/battle/spr_soul.png', script = 'engine.scripts.soul'}
 bt.enemy = {}
 bt.spared_enemy = {}
+bt.dead_enemy = {}
 
 bt.box = {}
 bt.box.border = 5
@@ -22,6 +21,7 @@ bt.song:play()
 
 bt.ftext = ""
 bt.ft_pos = 0
+
 
 bt.main_sel = 1
 bt.main = {
@@ -51,12 +51,14 @@ bt.main = {
 }
 
 bt.ismain = true
+bt.victory = false
 bt.enemy_turn = false
 bt.turn = 1
 bt.turn_timer = 0
 bt.turn_time = 3
+bt.player_dead = false
 
-require(mod_loaded ..'scripts.battle.encounters')()
+require('engine.scripts.encounters')()
 
 function bt.update(dt)
 
@@ -79,17 +81,24 @@ function bt.update(dt)
         end
 
         if Plus.keyPress == 'z' then
-            if bt.main_sel == 1 then
-                bt.main.fight.active = true
-            elseif bt.main_sel == 2 then
-                bt.main.act.active = true
-            elseif bt.main_sel == 3 then
-                bt.main.item.active = true
-            elseif bt.main_sel == 4 then
-                bt.main.mercy.active = true
+            if bt.victory == true then
+                bt = {}
+                Plus:loadState('game')
+                playerFree = true
+                return
+            else
+                if bt.main_sel == 1 then
+                    bt.main.fight.active = true
+                elseif bt.main_sel == 2 then
+                    bt.main.act.active = true
+                elseif bt.main_sel == 3 then
+                    bt.main.item.active = true
+                elseif bt.main_sel == 4 then
+                    bt.main.mercy.active = true
+                end
+                bt.ismain = false
+                bt.ft_pos = 0
             end
-            bt.ismain = false
-            bt.ft_pos = 0
         end
 
         bt.main_sel = math.max(bt.main_sel, 1)
@@ -360,6 +369,8 @@ function bt.update(dt)
         if Plus.keyPress == 'z' then
             if bt.main.mercy.options[bt.main.mercy.sel] == "* Spare" then
                 local play_sound = false
+                local spares = {}
+                local e_off = 0
                 for e = 1, #bt.enemy do
                     if bt.enemy[e].spare == true then
                         play_sound = true
@@ -372,12 +383,21 @@ function bt.update(dt)
                                 
                             end
                         end
-                        table.insert(bt.spared_enemy, bt.enemy[e])
-                        table.remove(bt.enemy, e)
+                        local my_off = e_off
+                        table.insert(spares, function ()
+                            table.insert(bt.spared_enemy, bt.enemy[e +my_off])
+                            table.remove(bt.enemy, e +my_off)
+                        end)
+                        e_off = e_off -1
                     end
                     if play_sound == true then
                         love.audio.newSource('assets/sounds/snd_vaporized.wav', "static"):play()
                     end
+                end
+                for s, func in ipairs(spares) do
+                    func()
+                end
+                if bt:checkVictory() == false then
                     bt:start_waves()
                 end
             end
@@ -396,32 +416,35 @@ function bt.update(dt)
         bt.main.mercy.sel = math.min(bt.main.mercy.sel, #bt.main.mercy.options)
     
     elseif bt.enemy_turn == true then
-        local soul_script = require(bt.soul.script)
-        soul_script:update(bt.soul)
-        bt.turn_timer = bt.turn_timer +1
-        for e = 1, #bt.enemy do
-            if bt.enemy_turn == true then
-                for b = 1, #bt.enemy[e].bullets do
-                    bt.enemy[e].bullets[b]:update(dt)
-                    bt.enemy[e].bullets[b]:check_hit()
-                end
-            end
-            bt.enemy[e].wave:update(dt)
-        end
-        if bt.turn_timer >= bt.turn_time * 60 then
+        if bt.player_dead == false then
+            local soul_script = require(bt.soul.script)
+            soul_script:update(bt.soul)
+            bt.turn_timer = bt.turn_timer +1
             for e = 1, #bt.enemy do
-                for b = 1, #bt.enemy[e].bullets do
-
+                if bt.enemy_turn == true then
+                    for b = 1, #bt.enemy[e].bullets do
+                    if bt.enemy[e].bullets[b].destroyed == false then
+                            bt.enemy[e].bullets[b]:update(dt)
+                            if bt.enemy[e].bullets[b] ~= nil then
+                                bt.enemy[e].bullets[b]:check_hit()
+                            end
+                        end
+                    end
                 end
-                bt.enemy[e].bullets = {}
+                bt.enemy[e].wave:update(dt)
             end
-            bt.enemy_turn = false
-            bt.turn_timer = 0
-            bt:set_box(575, 140)
-            bt.soul.x = 40
-            bt.soul.y = 446
-            bt.main_sel = 1
-            bt.turn = bt.turn +1
+            if bt.turn_timer >= bt.turn_time * 60 then
+                for e = 1, #bt.enemy do
+                    bt.enemy[e].bullets = {}
+                end
+                bt.enemy_turn = false
+                bt.turn_timer = 0
+                bt:set_box(575, 140)
+                bt.soul.x = 40
+                bt.soul.y = 446
+                bt.main_sel = 1
+                bt.turn = bt.turn +1
+            end
         end
     end
     
@@ -439,8 +462,14 @@ function bt.update(dt)
         bt.box.cur_height = bt.box.cur_height -((bt.box.cur_height- bt.box.height) /2);
     end
 
-    for e = 1, #bt.enemy do
-        bt.enemy[e]:update(dt)
+    if bt.player_dead == false then
+        for e = 1, #bt.enemy do
+            bt.enemy[e]:update(dt)
+        end
+    end
+
+    if player.hp <= 0 then
+        bt.player_dead = true
     end
 
 end
@@ -597,7 +626,9 @@ function bt.draw()
         bt.enemy[e]:draw()
         if bt.enemy_turn == true then
             for b = 1, #bt.enemy[e].bullets do
-                bt.enemy[e].bullets[b]:draw()
+                if bt.enemy[e].bullets[b] ~= nil then
+                    bt.enemy[e].bullets[b]:draw()
+                end
             end
         end
         --[[
@@ -610,8 +641,13 @@ function bt.draw()
         bt.spared_enemy[e]:draw()
     end
 
+    if bt.player_dead == true then
+        local soul_script = require(bt.soul.script)
+        soul_script:death(bt.soul)
+    end
+
     if bt.enemy_turn == true then
-        love.graphics.draw(sprite, bt.soul.x, bt.soul.y)
+        love.graphics.draw(love.graphics.newImage(bt.soul.sprite), bt.soul.x, bt.soul.y)
     end
 
 end
@@ -627,7 +663,6 @@ function bt:displayMsg(msg)
                 bt.main.act.page = bt.main.act.page +1
             end
             bt.ft_pos = 0
-            return nil
         end
     end
     writer:create(msg, 52, 270, 535, bt.ft_pos)
@@ -676,11 +711,59 @@ function bt:start_waves()
 
 end
 
+function bt:checkVictory()
+
+    if #bt.enemy == 0 then
+        bt.victory = true
+        bt.main_sel = -1
+
+        bt.main.fight.active = false
+        bt.main.fight.sel = 0
+
+        bt.main.act.active = false
+        bt.main.act.sel = 1
+        bt.main.act.selecting_act = false
+        bt.main.act.act_sel = 1
+        bt.main.act.acting = false
+        bt.main.act.page = 1
+
+        bt.main.item.active = false
+        bt.main.item.sel = 1
+        bt.main.item.using = false
+        bt.main.item.text = ""
+
+        bt.main.mercy.active = false
+        bt.main.mercy.sel = 1
+
+        bt:set_box(575, 140)
+        bt.ft_pos = 1
+
+        local exp = 0
+        local gold = 0
+        for e, enemy in ipairs(bt.spared_enemy) do
+            gold = gold +enemy.stats.gold
+        end
+        
+        for e, enemy in ipairs(bt.dead_enemy) do
+            gold = gold +enemy.stats.gold
+            exp = exp +enemy.stats.xp
+        end
+
+        player.gold = player.gold +gold
+        player.exp = player.exp +exp
+        bt.ftext = '* YOU WON!^* You earned '.. exp ..' EXP and '.. gold ..' gold.'
+        return true
+    else
+        return false
+    end
+
+end
+
 function bt:turn_length(time)
     if bt.turn_time < time then
         bt.turn_time = time
     end
 end
 
-bt.excluded_vars = {'enemy', 'main', 'main_sel', 'ismain', 'ftext'}
+bt.excluded_vars = {'enemy', 'spared_enemy', 'dead_enemy', 'main', 'main_sel', 'ismain', 'ftext'}
 return bt

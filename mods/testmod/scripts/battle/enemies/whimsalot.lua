@@ -2,7 +2,7 @@ local whimsalot = enemy_scripts:create('Whimsalot', 'spr_whimsalot_head', (640/3
 whimsalot.rig_only = true
 whimsalot.xscale = 2
 whimsalot.yscale = 2
-whimsalot.acts = {'Check', 'Mock'}
+whimsalot.acts = {'Check', 'Mock', 'Admire'}
 whimsalot.waves = {'basic_1', 'basic_2', 'whim'}
 whimsalot.waves_random = false
 whimsalot.y = 40
@@ -39,6 +39,12 @@ function whimsalot:act(name)
     if name == 'Mock' then
         enemy_scripts:act_text(whimsalot, {'* You put on a fake accent.', "* Whimsalot didn't seem too pleased."})
     end
+
+    if name == 'Admire' then
+        enemy_scripts:act_text(whimsalot, {"* You admired Whimsalot's great work.", "* Whimsalot seemed very pleased with himself."})
+        whimsalot.spare = true
+    end
+    
     
 end
 

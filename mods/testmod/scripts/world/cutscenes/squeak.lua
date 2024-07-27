@@ -4,6 +4,7 @@ function SqueakEvent:init()
     local sfx = love.audio.newSource(mod_loaded ..'assets/sounds/snd_hero.wav', "static")
     sfx:play()
     cutsceneActive = false
+    playerFree = true
 end
 
 -- Update gets called every frame

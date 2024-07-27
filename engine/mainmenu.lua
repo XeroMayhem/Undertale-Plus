@@ -121,7 +121,7 @@ function menu.draw()
         love.graphics.setColor(255, 255, 255, 1)
 
         if Plus.keyPress == 'z' then
-            local set_name = json.decode(love.filesystem.read(mod_loaded .."data.json")).chara_name
+            local set_name = json.decode(love.filesystem.read(mod_loaded .."data.json"))['chara_name']
             if set_name == "" then
                 menu.part = 3
             else
@@ -360,8 +360,8 @@ function menu.draw()
         end
         font:draw(time, 500-love.graphics.getFont():getWidth(time), 124)
 
-        local room_name = require (mod_loaded ..'scripts/world/rooms')
-        font:draw(room_name:getName(save_data.room), 140, 160)
+        local room_name = json.decode(love.filesystem.read(mod_loaded ..'scripts/world/room_names.json'))
+        font:draw(room_name[save_data.room], 140, 160)
 
         if menu.sel == 1 then love.graphics.setColor(255, 255, 0, 1) end
         font:draw("Continue", 140, 210)

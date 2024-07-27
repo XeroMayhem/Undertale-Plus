@@ -9,8 +9,8 @@ return {
   height = 12,
   tilewidth = 20,
   tileheight = 20,
-  nextlayerid = 21,
-  nextobjectid = 98,
+  nextlayerid = 22,
+  nextobjectid = 103,
   properties = {},
   tilesets = {
     {
@@ -422,22 +422,6 @@ return {
           }
         },
         {
-          id = 77,
-          name = "transition_2",
-          type = "",
-          shape = "rectangle",
-          x = 0,
-          y = 140,
-          width = 20,
-          height = 40,
-          rotation = 0,
-          visible = true,
-          properties = {
-            ["map"] = "Ruins02",
-            ["marker"] = "entry_right"
-          }
-        },
-        {
           id = 89,
           name = "transition_3",
           type = "",
@@ -478,6 +462,51 @@ return {
           y = 140,
           width = 0,
           height = 0,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 102,
+          name = "transition_2",
+          type = "",
+          shape = "rectangle",
+          x = 0,
+          y = 140,
+          width = 20,
+          height = 40,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["map"] = "Ruins02",
+            ["marker"] = "entry_right"
+          }
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      draworder = "topdown",
+      id = 21,
+      name = "Cutscene",
+      class = "",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
+      properties = {},
+      objects = {
+        {
+          id = 99,
+          name = "susie_chase_intro",
+          type = "",
+          shape = "rectangle",
+          x = -20,
+          y = 0,
+          width = 20,
+          height = 40,
           rotation = 0,
           visible = true,
           properties = {}

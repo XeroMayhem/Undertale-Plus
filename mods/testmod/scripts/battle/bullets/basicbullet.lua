@@ -1,11 +1,14 @@
 return function (x, y, dir, speed)
     
-    local Bullet = enemy_scripts:create_bullet(x, y, "basicbullet.png")
+    local Bullet = enemy_scripts:bullet_init(x, y, "basicbullet.png")
     Bullet.dir = dir
     Bullet.speed = speed
+    Bullet.destroyed = false
     function Bullet:update(dt)
-        Bullet.x = Bullet.x + (math.cos(Bullet.dir) * speed)
-        Bullet.y = Bullet.y + (math.sin(Bullet.dir) * speed)
+        moveObject(Bullet, Bullet.speed, Bullet.dir)
+        if Bullet.speed < 0 and Bullet.x < 0 then
+            Bullet:destroy()
+        end
     end
     return Bullet
 

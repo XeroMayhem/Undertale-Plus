@@ -10,13 +10,23 @@ whimsun.waves = {'whim'}
 
 function whimsun:update(dt)
     
-    whimsun.y = whimsun.y +(whimsun.fly_speed)
-    if whimsun.fly_speed > 0 and whimsun.y >= whimsun.yend then
-        whimsun.fly_speed = whimsun.fly_speed *-1
+    if whimsun.been_spared == false then
+        whimsun.y = whimsun.y +(whimsun.fly_speed)
+        if whimsun.fly_speed > 0 and whimsun.y >= whimsun.yend then
+            whimsun.fly_speed = whimsun.fly_speed *-1
+        end
+
+        if whimsun.fly_speed < 0 and whimsun.y <= whimsun.ystart then
+            whimsun.fly_speed = whimsun.fly_speed *-1
+        end
     end
 
-    if whimsun.fly_speed < 0 and whimsun.y <= whimsun.ystart then
-        whimsun.fly_speed = whimsun.fly_speed *-1
+end
+
+function whimsun:act(name)
+    
+    if name == 'Check' then
+        enemy_scripts:act_text(whimsun, "* It won't open up to you...")
     end
 
 end

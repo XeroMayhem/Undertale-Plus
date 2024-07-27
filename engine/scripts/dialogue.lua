@@ -22,20 +22,18 @@ function dialogue:init()
     end)
     input:keypress('z', function()
         if dialogue.isActive then
-            if dialogue.isopt == true then
-                if dialogue.draw_char >= dialogue.text_length[dialogue.page] then
+            if dialogue.draw_char >= dialogue.text_length[dialogue.page] then
+                if dialogue.page +1 < dialogue.pageNum +1 then
                     dialogue.page = dialogue.page +1
                     dialogue.draw_char = 0
-                    dialogue:destroy()
-                    dialogue.choice[dialogue.optsel +1]()
-                end
-            else
-                if dialogue.draw_char >= dialogue.text_length[dialogue.page] then
-                    if dialogue.page +1 < dialogue.pageNum +1 then        
-                        dialogue.page = dialogue.page +1
-                        dialogue.draw_char = 0
+                else
+                    if dialogue.isopt == true then
+                        if dialogue.draw_char >= dialogue.text_length[dialogue.page] then
+                            dialogue.draw_char = 0
+                            dialogue:destroy()
+                            dialogue.choice[dialogue.optsel +1]()
+                        end
                     else
-                        dialogue.page = dialogue.page +1
                         dialogue.draw_char = 0
                         dialogue:destroy()
                     end
@@ -240,7 +238,7 @@ function dialogue:draw()
             (dialogue.boxY +dialogue.offY) +dialogue.border +dialogue.char[dialogue.page][c].y)
     end
 
-    if dialogue.isopt == true and dialogue.draw_char >= dialogue.text_length[dialogue.page] then
+    if dialogue.page +1 >= dialogue.pageNum +1 and dialogue.isopt == true and dialogue.draw_char >= dialogue.text_length[dialogue.page] then
         local sprite = love.graphics.newImage('assets/sprites/player/soul_menu.png')
         local offset = -1
         local txt = 0

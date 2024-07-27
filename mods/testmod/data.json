@@ -1,7 +1,7 @@
 {
-    "name" : "New Mod",
+    "name" : "Test Mod",
     "map" : "RuinsTestMap",
-    "song" : "mus_ruins.ogg",
+    "area" : "ruins",
     "has_cell" : false,
     "flag_count" : 2,
     "chara_name" : "Audrey",

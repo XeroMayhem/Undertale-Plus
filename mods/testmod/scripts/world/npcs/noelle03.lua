@@ -2,7 +2,8 @@ local npc = {}
 
 function npc:onInteract()
     Textbox:create()
-    Textbox:pageParams("* Hey there!^* Wanna take this off my hands?^        Yes         No/C", 'snd_txt_noe.wav')
+    Textbox:pageParams("* Hey there!", 'snd_txt_noe.wav')
+    Textbox:pageParams("* Wanna take this off my hands?^        Yes         No/C", 'snd_txt_noe.wav')
     Textbox:setChoice(1, function() 
         Textbox:create()
         inventory:addItem("snow_cone")

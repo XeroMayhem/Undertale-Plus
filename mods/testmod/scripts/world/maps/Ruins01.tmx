@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="20" tileheight="20" infinite="0" nextlayerid="21" nextobjectid="98">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="20" tileheight="20" infinite="0" nextlayerid="22" nextobjectid="103">
  <editorsettings>
   <export target="Ruins01.lua" format="lua"/>
  </editorsettings>
@@ -139,12 +139,6 @@
    </properties>
    <point/>
   </object>
-  <object id="77" name="transition_2" x="0" y="140" width="20" height="40">
-   <properties>
-    <property name="map" value="Ruins02"/>
-    <property name="marker" value="entry_right"/>
-   </properties>
-  </object>
   <object id="89" name="transition_3" x="220" y="0" width="40" height="20">
    <properties>
     <property name="map" value="Ruins03"/>
@@ -160,6 +154,15 @@
   <object id="97" name="save" x="60" y="140">
    <point/>
   </object>
+  <object id="102" name="transition_2" x="0" y="140" width="20" height="40">
+   <properties>
+    <property name="map" value="Ruins02"/>
+    <property name="marker" value="entry_right"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup color="#ff00ff" id="21" name="Cutscene">
+  <object id="99" name="susie_chase_intro" x="-20" y="0" width="20" height="40"/>
  </objectgroup>
  <objectgroup color="#7f00ff" id="18" name="Markers">
   <object id="67" name="down_entry" x="200" y="200">

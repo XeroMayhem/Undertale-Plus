@@ -27,6 +27,10 @@ function player:load()
     player.animations.right = 'assets/sprites/player/walk/right'
     player.animations.up = 'assets/sprites/player/walk/up'
 
+    player.encounter_start = 100
+    player.encounter_end = 20
+    player.encounter_chance = player.encounter_start
+
     player.fps = 4
     player.frame = 1
     player.frameTimer = 1
@@ -68,6 +72,10 @@ function player:load()
     player.love = 1
     player.gold = 0
     player.exp = 0
+    player.soul_cursour = {
+        x = player.x,
+        y = player.y
+    }
 
     player.levels = {}
     local add_levels = function (hp, at, df, exp)
@@ -147,17 +155,41 @@ function player:update(dt)
             end
             player.sprite = love.graphics.newImage(sprite_file)
         end
+
+        if can_encounter and Plus.state ~= 'battle' then
+            
+            if math.random(player.encounter_chance) == 1 then
+                --random_encounter()
+                player.encounter_chance = player.encounter_start
+			else
+                local area_population = 20
+                local area_killed = 0
+                if area_population - area_killed > 0 then
+                    local populationfactor = (area_population -area_killed)/area_population
+                    player.encounter_chance = player.encounter_chance -populationfactor
+                else
+                    player.encounter_chance = player.encounter_chance -1
+                end
+				player.encounter_chance = math.clamp(player.encounter_chance, player.encounter_end, player.encounter_start)
+            end
+		end
     end
 
     player.x = player.collider:getX()
     player.y = player.collider:getY()
     player.depth = -player.collider:getY()
 
+    
+    player.soul_cursour = {
+        x = player.x -(player.sprite:getWidth()/2),
+        y = player.y -(player.sprite:getHeight() *0.75)
+    }
+
 end
 
 function player:draw()
 
-    love.graphics.draw(player.sprite, player.x, player.y, nil, gameScale, gameScale, player.sprite:getWidth()/2, player.sprite:getHeight() *0.75 )
+    love.graphics.draw(player.sprite, player.x, player.y, nil, gameScale, gameScale, player.sprite:getWidth()/2, player.sprite:getHeight() *0.75)
     --love.graphics.draw( drawable, x, y, r, sx, sy, ox, oy, kx, ky )
 end
 
@@ -180,6 +212,13 @@ function player:setPosition(x, y)
     player.x = player.collider:getX()
     player.y = player.collider:getY()
     player.depth = -player.collider:getY()
+end
+
+function player:checkLiteral(class)
+    class = defaultValue(class, {})
+    local colliders = world:queryRectangleArea(player.collider:getX() -player.width/2, player.collider:getY() -(player.height/2), player.width, player.height, class)
+
+    return colliders
 end
 
 function player:checkDirect(class)

@@ -43,9 +43,36 @@ local function key_load()
         elseif overworld_menu.isMain then
             overworld_menu:destroy()
         end
-    
+
     end)
 
+    input:keypress('space', random_encounter)
+
+end
+
+function start_battle()
+    local enemy_list = love.filesystem.getDirectoryItems('mods/'.. Plus.loaded_mod..'/scripts/battle/enemies')
+    for i = 1, #enemy_list do
+        local name = 'mods/'.. Plus.loaded_mod..'/scripts/battle/enemies/' ..enemy_list[i]
+        name = name:sub(1, #name -4)
+        --print(name)
+        package.loaded[name] = nil
+    end
+    Plus:reloadState('battle')
+end
+
+function start_encounter(x, y, soul)
+    x = defaultValue(x, player.soul_cursour.x)
+    y = defaultValue(y, player.soul_cursour.y)
+    soul = defaultValue(soul, 'assets/sprites/ui/battle/spr_soul.png')
+    
+    curEncounter = require('engine.scripts.encounter')(x, y, soul)
+    isEncounter = true
+    playerFree = false
+end
+
+function random_encounter()
+    start_encounter()
 end
 
 function load_map()
@@ -113,7 +140,7 @@ function load_map()
     if gameMap.layers["Cutscene"] then
         for i, obj in pairs(gameMap.layers["Cutscene"].objects) do
             local interactable = nil
-            if rawget(obj, Width) ~= nil then
+            if obj["width"] > 0 then
                 interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, obj.width *gameScale, obj.height *gameScale)
             else
                 interactable = world:newRectangleCollider(obj.x *gameScale, obj.y *gameScale, 20 *gameScale, 20 *gameScale)
@@ -136,6 +163,13 @@ function reset_world()
     world:addCollisionClass('transition', {ignores = {'player'}})
     world:addCollisionClass('cutscene', {ignores = {'player'}})
     world:addCollisionClass('ghost', {ignores = {'player'}})
+end
+
+function set_area(new_area)
+
+    area = new_area
+    area_data = json.decode(love.filesystem.read(mod_loaded ..'scripts/world/areas/' ..area ..'.json'))
+
 end
 
 local game = {}
@@ -177,11 +211,16 @@ function game.update(dt)
         
         Textbox = require 'engine/scripts/dialogue'
         Textbox:init()
+ 
+        curEncounter = require('engine.scripts.encounter')(0, 0)
+        isEncounter = false
         
         TransitionIsActive = false
         TransitionAlpha = 0
         TransitionMultiplier = 1
         curTransition = nil
+        
+        can_encounter = true
         
         overworld_menu = require 'engine/scripts/overworld_menu'
         overworld_menu:init()
@@ -207,10 +246,13 @@ function game.update(dt)
     
         cutsceneActive = false
         cutsceneReady = true
+
+        area = mod_data.area
+        area_data = json.decode(love.filesystem.read(mod_loaded ..'scripts/world/areas/' ..area ..'.json'))
     
         music = {}
-        music.ruins = love.audio.newSource(mod_loaded ..'assets/music/' .. mod_data.song, "stream")
-    
+        music.ruins = love.audio.newSource(mod_loaded ..'assets/music/' ..area_data.music, "stream")
+        
         bgMusic = music.ruins
         bgMusic:setLooping(true)
     
@@ -242,14 +284,16 @@ function game.update(dt)
 
         player:update(dt)
 
-        local px, py = player.collider:getPosition()
-        local colliders = player:checkDirect({'cutscene'})
+        local colliders = player:checkLiteral({'cutscene'})
 
         if #colliders > 0 then
             for i, obj in pairs(gameMap.layers["Cutscene"].objects) do
                 if obj.id == colliders[1].id and cutsceneReady == true then
                     
                     cutsceneReady = false
+                    
+                    cutsceneActive = true
+                    playerFree = false
                     local script = mod_loaded ..'scripts/world/cutscenes/' ..obj.name
                     curCutscene = require(script)
                     curCutscene:init()
@@ -306,9 +350,26 @@ end
 
 function game.draw()
 
-    love.graphics.translate(-camx, -camy)
+    if love.window.getFullscreen() == true then
 
-    gameMap:draw(-camx/2, -camy/2, gameScale, gameScale)
+        local width, height = love.window.getDesktopDimensions()
+        local scale = math.min(width/320, height/240)
+        local offset = (width -(320 *scale))/2
+
+        gameMap:draw((offset/scale) -camx/2, -camy/2, scale, scale)
+
+        love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.rectangle("fill", 0, 0, offset +1, height)
+        love.graphics.rectangle("fill", width -offset -1, 0, offset +1, height)
+        love.graphics.setColor(1, 1, 1, 1)
+
+        love.graphics.scale(scale/gameScale, scale/gameScale)
+        love.graphics.translate((offset/(scale/2)) -camx, -camy)
+
+    else
+        love.graphics.translate(-camx, -camy)
+        gameMap:draw(-camx/2, -camy/2, gameScale, gameScale)
+    end
     
     local objects = {}
     for i=1, #overworld.objects do
@@ -320,8 +381,10 @@ function game.draw()
         obj[2]:draw()
     end
 
-    --world:draw()
-    --world:setQueryDebugDrawing(true)
+    --[[
+    world:draw()
+    world:setQueryDebugDrawing(true)
+    --]]
 
     love.graphics.translate(0, 0)
    
@@ -335,6 +398,10 @@ function game.draw()
 
     if SaveMenu.isActive == true then
         SaveMenu:draw()
+    end
+
+    if isEncounter == true then
+        curEncounter:update()
     end
 
     if Textbox.isActive == true then
@@ -362,8 +429,6 @@ function game.draw()
         love.graphics.rectangle("fill", camx, camy, 640, 480)
         love.graphics.setColor(255, 255, 255, 1)
     end
-
-    Plus:loadState('battle')
 end
 
 game.excluded_vars = {"loaded"}

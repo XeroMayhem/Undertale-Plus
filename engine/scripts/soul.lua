@@ -1,4 +1,5 @@
 local player = {}
+local death_count = 1
 
 function player:update(soul)
 
@@ -22,8 +23,7 @@ function player:update(soul)
     soul.x = soul.x +vx
     soul.y = soul.y +vy
     local sprite = love.graphics.newImage(bt.soul.sprite)
-    
-    
+
     if soul.x < 320 -(bt.box.width/2) +bt.box.border then
         soul.x = 320 -(bt.box.width/2) +bt.box.border
     end
@@ -40,6 +40,24 @@ function player:update(soul)
         soul.y = 320 +(bt.box.height/2) -bt.box.border -sprite:getHeight()
     end
 
+
+end
+
+function player:death(soul)
+
+    death_count = death_count +1
+    if death_count > 30 then
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.rectangle("fill", 0, 0, 320 *gameScale, 240 *gameScale)
+        love.graphics.setColor(255, 255, 255)
+    end
+    if death_count == 50 then
+        soul.sprite = 'assets/sprites/ui/battle/spr_heartbreak.png'
+        soul.x = soul.x -2
+    end
+    if death_count == 90 then
+        
+    end
 
 end
 

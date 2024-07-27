@@ -149,11 +149,12 @@ function enemy:create(name, sprite, pos, hurt_sprite)
                 end
                 rig.sprite = love.graphics.newImage(sprite_file)
                 rig.sprite_data = love.image.newImageData(sprite_file)
-                if id.been_spared == false then
-                    rig.alpha = 1
-                else
-                    rig.alpha = 0.2
-                end
+            end
+            
+            if id.been_spared == false then
+                rig.alpha = 1
+            else
+                rig.alpha = 0.2
             end
         
             love.graphics.setColor(1, 1, 1, rig.alpha)
@@ -218,6 +219,16 @@ function enemy:create(name, sprite, pos, hurt_sprite)
 
 end
 
+function enemy:spawn_bullet(monster, bullet_name, ...)
+
+    local bullet = require (mod_loaded .."scripts/battle/bullets/".. bullet_name)(...)
+    table.insert(monster.bullets, bullet)
+    bullet.id = {creator = monster, index = #monster.bullets}
+
+    return bullet
+
+end
+
 function enemy:stats(hp, at, df, xp, gold)
     local id = {}
     id = {
@@ -269,10 +280,11 @@ function enemy:act_text(id, text)
 end
 
 --Bullets
-function enemy:create_bullet(x, y, sprite, colour, damage)
+function enemy:bullet_init(x, y, sprite, color, damage, destroy_on_hit)
 
-    colour = defaultValue(colour, 'white')
+    color = defaultValue(color, 'white')
     damage = defaultValue(damage, 1)
+    destroy_on_hit = defaultValue(destroy_on_hit, true)
 
     local id = {}
     local esprite = sprite
@@ -295,7 +307,8 @@ function enemy:create_bullet(x, y, sprite, colour, damage)
         sprite = esprite,
         sprite_data = love.image.newImageData(exsprite),
         dmg = damage,
-        colour = colour,
+        color = color,
+        destroy_on_hit = destroy_on_hit,
         hit = false
     }
     id.x = x
@@ -311,26 +324,28 @@ function enemy:create_bullet(x, y, sprite, colour, damage)
     end
 
     function id:draw()
-        if love.filesystem.getInfo(bullet_sprite_path.. id.sprite_id).type == 'directory' and id.been_spared == false then
-            id.frameTimer = id.frameTimer+1
-            if id.frameTimer > 60/id.fps then
-                id.frame = id.frame+1
-                id.frameTimer = 1
-            end
-            local sprite_file = bullet_sprite_path.. id.sprite_id  ..'/' ..id.sprite_id ..'_' ..id.frame ..'.png'
-            if not love.filesystem.getInfo(sprite_file) then
-                id.frame = 1
-                if love.filesystem.getInfo(bullet_sprite_path.. id.sprite_id  ..'/' ..id.sprite_id ..'_0.png') then
-                    id.frame = 0
+        if id.destroyed == false then
+            if love.filesystem.getInfo(bullet_sprite_path.. id.sprite_id).type == 'directory' and id.been_spared == false then
+                id.frameTimer = id.frameTimer+1
+                if id.frameTimer > 60/id.fps then
+                    id.frame = id.frame+1
+                    id.frameTimer = 1
                 end
-                sprite_file = bullet_sprite_path.. id.sprite_id  ..'/' ..id.sprite_id ..'_' ..id.frame ..'.png'
+                local sprite_file = bullet_sprite_path.. id.sprite_id  ..'/' ..id.sprite_id ..'_' ..id.frame ..'.png'
+                if not love.filesystem.getInfo(sprite_file) then
+                    id.frame = 1
+                    if love.filesystem.getInfo(bullet_sprite_path.. id.sprite_id  ..'/' ..id.sprite_id ..'_0.png') then
+                        id.frame = 0
+                    end
+                    sprite_file = bullet_sprite_path.. id.sprite_id  ..'/' ..id.sprite_id ..'_' ..id.frame ..'.png'
+                end
+                id.sprite = love.graphics.newImage(sprite_file)
             end
-            id.sprite = love.graphics.newImage(sprite_file)
-        end
 
-        love.graphics.setColor(enemy:get_bullet_colour(id.colour))
-        love.graphics.draw(id.sprite, id.x, id.y, 0, id.scale, id.scale)
-        love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.setColor(enemy:get_bullet_color(id.color))
+            love.graphics.draw(id.sprite, id.x, id.y, 0, id.scale, id.scale)
+            love.graphics.setColor(1, 1, 1, 1)
+        end
     end
 
     function id:check_hit()
@@ -344,14 +359,16 @@ function enemy:create_bullet(x, y, sprite, colour, damage)
                     local y = id.y +h
                     if a == 1 then
                         if x >= bt.soul.x and x <= bt.soul.x +soul_sprite:getWidth() and y >= bt.soul.y and y <= bt.soul.y +soul_sprite:getHeight() then
-                            if id.colour == 'white' then
+                            if id.color == 'white' then
                                 player.hp = player.hp -id.dmg
-                            elseif id.colour == 'green' then
+                            elseif id.color == 'green' then
                                 player.hp = player.hp +id.dmg
-                            elseif id.colour == 'blue' then
+                            elseif id.color == 'blue' then
                                 player.hp = player.hp -id.dmg
                             end
                             id.hit = true
+                            love.audio.newSource('assets/sounds/snd_hurt.wav', "static"):play()
+                            if id.destroy_on_hit == true then id:destroy() end
                             return nil
                         end
                     end
@@ -361,16 +378,20 @@ function enemy:create_bullet(x, y, sprite, colour, damage)
         end
     end
 
+    function id:destroy()
+        id.destroyed = true
+    end
+
     return id
 
 end
 
-function enemy:get_bullet_colour(colour)
-    if colour == 'white' then
+function enemy:get_bullet_color(color)
+    if color == 'white' then
         return {1, 1, 1, 1}
-    elseif colour == 'green' then
+    elseif color == 'green' then
         return {0, 1, 0, 1}
-    elseif colour == 'blue' then
+    elseif color == 'blue' then
         return {0, 0.5, 1, 1}
     end
 end
