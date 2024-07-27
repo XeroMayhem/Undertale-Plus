@@ -1,4 +1,4 @@
 {
-    "rooms" : ["Ruins01", "Ruins02", "Ruins03", "RuinsTestMap"],
+    "rooms" : ["Ruins01", "Ruins03", "RuinsTestMap"],
     "music" : "mus_ruins.ogg"
 }

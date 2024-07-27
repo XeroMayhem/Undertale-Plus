@@ -73,6 +73,22 @@ function loader.update(dt)
 end
 
 function loader.draw()
+
+    if love.window.getFullscreen() == true then
+
+        local width, height = love.window.getDesktopDimensions()
+        local scale = math.min(width/320, height/240)
+        local offset = (width -(320 *scale))/2
+
+        love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.rectangle("fill", 0, 0, offset +1, height)
+        love.graphics.rectangle("fill", width -offset -1, 0, offset +1, height)
+        love.graphics.setColor(1, 1, 1, 1)
+
+        love.graphics.scale(scale/gameScale, scale/gameScale)
+        love.graphics.translate((offset/(scale/2)), 0)
+
+    end
     
     if loader.selectMod == false then
 
@@ -129,6 +145,20 @@ function loader.draw()
             love.graphics.draw(sprite, 260, 240 +120, nil, 1, 1)
             font:draw({{255, 255, 0, 1}, "Start"}, 280, 232 +120)
         ]]
+    end
+
+    if love.window.getFullscreen() == true then
+
+        local width, height = love.window.getDesktopDimensions()
+        local scale = math.min(width/320, height/240)
+        local offset = (width -(320 *scale))/2
+        love.graphics.translate(-offset, 0)
+
+        love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.rectangle("fill", 0, 0, offset +1, height)
+        love.graphics.rectangle("fill", (offset -1) +(320 *scale)/(scale/2), 0, offset +1, height)
+        love.graphics.setColor(1, 1, 1, 1)
+
     end
     
 end

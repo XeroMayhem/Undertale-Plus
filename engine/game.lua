@@ -169,6 +169,10 @@ function set_area(new_area)
 
     area = new_area
     area_data = json.decode(love.filesystem.read(mod_loaded ..'scripts/world/areas/' ..area ..'.json'))
+    bgMusic:stop()
+    bgMusic = love.audio.newSource(mod_loaded ..'assets/music/' ..area_data.music, "stream")
+    bgMusic:setLooping(true)
+    bgMusic:play()
 
 end
 
@@ -250,11 +254,9 @@ function game.update(dt)
         area = mod_data.area
         area_data = json.decode(love.filesystem.read(mod_loaded ..'scripts/world/areas/' ..area ..'.json'))
     
-        music = {}
-        music.ruins = love.audio.newSource(mod_loaded ..'assets/music/' ..area_data.music, "stream")
-        
-        bgMusic = music.ruins
+        bgMusic = love.audio.newSource(mod_loaded ..'assets/music/' ..area_data.music, "stream")
         bgMusic:setLooping(true)
+        bgMusic:play()
     
         inventory = require 'engine.scripts.inventory'
         inventory:create()
@@ -271,8 +273,6 @@ function game.update(dt)
         camf = player
     
         load_map()
-    
-        bgMusic:play()
     
         --load save 
         determination = require 'engine.scripts.determination'
@@ -338,6 +338,27 @@ function game.update(dt)
     camy = math.min(camy, (gameMap.height  *gameMap.tileheight *gameScale) -(240*gameScale))
 
     world:update(dt)
+
+    wrong_area = true
+    for r, area_room in ipairs(area_data["rooms"]) do
+        if area_room == room then
+            wrong_area = false
+        end
+    end
+    
+    if wrong_area == true then
+        local area_list = love.filesystem.getDirectoryItems(mod_loaded ..'scripts/world/areas/')
+        for a, area in ipairs(area_list) do
+            print(mod_loaded ..'scripts/world/areas/' ..area)
+            local data = json.decode(love.filesystem.read(mod_loaded ..'scripts/world/areas/' ..area))
+            for r, area_room in ipairs(data["rooms"]) do
+                if area_room == room then
+                    set_area(area:sub(1, #area -5))
+                    break
+                end
+            end
+        end
+    end
 
     local world_file = mod_loaded .."scripts.world.world_update"
     require (world_file):update()
@@ -429,6 +450,24 @@ function game.draw()
         love.graphics.rectangle("fill", camx, camy, 640, 480)
         love.graphics.setColor(255, 255, 255, 1)
     end
+
+    
+    font:draw(area, camx, 0)
+
+    if love.window.getFullscreen() == true then
+
+        local width, height = love.window.getDesktopDimensions()
+        local scale = math.min(width/320, height/240)
+        local offset = (width -(320 *scale))/2
+        love.graphics.translate(camx -offset, 0)
+
+        love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.rectangle("fill", 0, 0, offset +1, height)
+        love.graphics.rectangle("fill", (offset -1) +(320 *scale)/(scale/2), 0, offset +1, height)
+        love.graphics.setColor(1, 1, 1, 1)
+
+    end
+
 end
 
 game.excluded_vars = {"loaded"}
