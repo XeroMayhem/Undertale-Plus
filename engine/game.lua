@@ -55,7 +55,6 @@ function start_battle()
     for i = 1, #enemy_list do
         local name = 'mods/'.. Plus.loaded_mod..'/scripts/battle/enemies/' ..enemy_list[i]
         name = name:sub(1, #name -4)
-        --print(name)
         package.loaded[name] = nil
     end
     Plus:reloadState('battle')
@@ -197,7 +196,7 @@ function game.update(dt)
         for i = 1, mod_data.flag_count do
             table.insert(flag, 0)
         end
-    
+
         cell = require(mod_loaded ..'scripts/data/cell/cell')
         cell:init()
     
@@ -250,6 +249,7 @@ function game.update(dt)
     
         cutsceneActive = false
         cutsceneReady = true
+        cutscene = require 'engine.scripts.cutscene'
 
         area = mod_data.area
         area_data = json.decode(love.filesystem.read(mod_loaded ..'scripts/world/areas/' ..area ..'.json'))
@@ -295,8 +295,12 @@ function game.update(dt)
                     cutsceneActive = true
                     playerFree = false
                     local script = mod_loaded ..'scripts/world/cutscenes/' ..obj.name
-                    curCutscene = require(script)
-                    curCutscene:init()
+                    package.loaded['engine.scripts.cutscene'] = nil
+                    cutscene = require 'engine.scripts.cutscene'
+                    require(script)(cutscene)
+                    curCutscene = function()
+                        cutscene:update()
+                    end
                 end
             end
         else
@@ -319,11 +323,6 @@ function game.update(dt)
 
     else
         player.frame = 2
-
-        if cutsceneActive == true then
-            curCutscene:update()
-        end
-
     end
 
     if camf.x > 160 *gameScale then
@@ -349,7 +348,6 @@ function game.update(dt)
     if wrong_area == true then
         local area_list = love.filesystem.getDirectoryItems(mod_loaded ..'scripts/world/areas/')
         for a, area in ipairs(area_list) do
-            print(mod_loaded ..'scripts/world/areas/' ..area)
             local data = json.decode(love.filesystem.read(mod_loaded ..'scripts/world/areas/' ..area))
             for r, area_room in ipairs(data["rooms"]) do
                 if area_room == room then
@@ -360,11 +358,12 @@ function game.update(dt)
         end
     end
 
-    local world_file = mod_loaded .."scripts.world.world_update"
-    require (world_file):update()
-
     if Textbox.isActive == true then
         Textbox:update()
+    end
+
+    if cutsceneActive == true then
+        curCutscene()
     end
 
 end
@@ -408,10 +407,6 @@ function game.draw()
     --]]
 
     love.graphics.translate(0, 0)
-   
-    if cutsceneActive == true then
-        curCutscene:draw()
-    end
 
     if overworld_menu.active == true then
         overworld_menu:draw()
@@ -450,9 +445,6 @@ function game.draw()
         love.graphics.rectangle("fill", camx, camy, 640, 480)
         love.graphics.setColor(255, 255, 255, 1)
     end
-
-    
-    font:draw(area, camx, 0)
 
     if love.window.getFullscreen() == true then
 

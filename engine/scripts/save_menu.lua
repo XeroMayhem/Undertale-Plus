@@ -91,8 +91,8 @@ function menu:draw()
         font:draw(time, camx +500-love.graphics.getFont():getWidth(time), camy +146)
 
         if love.filesystem.getInfo("saves/" ..Plus.loaded_mod ..".json") then
-            local room_name = require ('engine.scripts.rooms')
-            font:draw(room_name:getName(save_data.room), camx +140, camy +182)
+            local room_name = json.decode(love.filesystem.read(mod_loaded ..'scripts/world/room_names.json'))
+            font:draw(room_name[save_data.room], camx +140, camy +182)
         else
             font:draw("--", camx +140, camy +182)
         end

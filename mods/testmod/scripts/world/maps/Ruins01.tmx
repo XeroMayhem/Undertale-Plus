@@ -162,7 +162,7 @@
   </object>
  </objectgroup>
  <objectgroup color="#ff00ff" id="21" name="Cutscene">
-  <object id="99" name="susie_chase_intro" x="-20" y="0" width="20" height="40"/>
+  <object id="99" name="squeak" x="80" y="60" width="40" height="40"/>
  </objectgroup>
  <objectgroup color="#7f00ff" id="18" name="Markers">
   <object id="67" name="down_entry" x="200" y="200">

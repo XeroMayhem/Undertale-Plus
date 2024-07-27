@@ -500,12 +500,12 @@ return {
       objects = {
         {
           id = 99,
-          name = "susie_chase_intro",
+          name = "squeak",
           type = "",
           shape = "rectangle",
-          x = -20,
-          y = 0,
-          width = 20,
+          x = 80,
+          y = 60,
+          width = 40,
           height = 40,
           rotation = 0,
           visible = true,
