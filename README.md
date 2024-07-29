@@ -6,7 +6,7 @@ Undertale Plus is an [UNDERTALE](https://undertale.com/) fangame and battle engi
 > Make sure to read the *downloading section* of before attempting to download Undertale Plus.
 
 ## General Information
-The website should show you everything you need if you have any unanswered questions then check out our discord and ask for help!
+The [website](https://xeromayhem.github.io/UndertalePlus/) should show you everything you need if you have any unanswered questions then check out our discord and ask for help!
 
 ## Downloading
 There are 2 different versions for you to download **the Source Code Version** and **the Recent Release Version**
