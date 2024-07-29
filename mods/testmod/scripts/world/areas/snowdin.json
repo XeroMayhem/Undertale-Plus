@@ -1,4 +1,5 @@
 {
     "rooms" : ["Ruins02"],
-    "music" : "mus_snowy.ogg"
+    "music" : "mus_snowy.ogg",
+    "population" : 20
 }

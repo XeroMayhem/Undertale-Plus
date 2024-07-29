@@ -1,6 +1,3 @@
-local input = require 'engine/scripts/input'
-local font = require 'engine/scripts/font'
-local writer = require 'engine.scripts.text_writer'
 enemy_scripts = require 'engine.scripts.enemy'
 
 bt = {}
@@ -22,12 +19,24 @@ bt.song:play()
 bt.ftext = ""
 bt.ft_pos = 0
 
+bt.slash_anim = {}
+bt.slash_anim.frame = 0
+bt.slash_anim.spritefile = 'assets/sprites/ui/battle/spr_strike/spr_strike'
+bt.slash_anim.sprite = love.graphics.newImage(bt.slash_anim.spritefile ..'_' ..bt.slash_anim.frame ..'.png')
 
 bt.main_sel = 1
 bt.main = {
     fight = {
         active = false,
-        sel = 1
+        sel = 1,
+        quick_event = false,
+        bars = {},
+        hit_bars = {},
+        missed_bars = {},
+        slash = false,
+        damage = 0,
+        damagetimer = 0,
+        draw_slash = false
     },
     act = {
         active = false,
@@ -84,6 +93,7 @@ function bt.update(dt)
             if bt.victory == true then
                 bt = {}
                 Plus:loadState('game')
+                bgMusic:play()
                 playerFree = true
                 return
             else
@@ -116,25 +126,89 @@ function bt.update(dt)
 
     elseif bt.main.fight.active == true then
         
-        if Plus.keyPress == 'x' then
-            bt.main.fight.active = false
-        end
+        if bt.main.fight.quick_event == true then
 
-        if Plus.keyPress == 'z' then
+            if bt.main.fight.slash == true then
+
+                if bt.main.fight.draw_slash == false then
+                    bt.enemy[bt.main.fight.sel]:hurt(bt.main.fight.damage)
+                end
+                
+            else
+
+                for b, bar in ipairs(bt.main.fight.bars) do
+                    bar.accuracy = bar.accuracy +bar.speed
+                end
+
+                if Plus.keyPress == 'z' then
+                    for b = 1, #bt.main.fight.bars do
+                        if bt.main.fight.bars[b].hit == false then
+                            bt.main.fight.bars[b].hit = true
+                            table.insert(bt.main.fight.hit_bars, {accuracy = bt.main.fight.bars[b].accuracy, display_time = 10})
+                            break
+                        end
+                    end
+                end
+
+                if #bt.main.fight.bars == #bt.main.fight.hit_bars + #bt.main.fight.missed_bars then
+                    local enemy = bt.enemy[bt.main.fight.sel]
+                    local base_damage = ((player.at +player.weapon.power) +(math.random() +math.random()) -enemy.stats.df)
+                    local damage = 0
+                    if #bt.main.fight.hit_bars == 1 then
+                        local myx = (bt.main.fight.hit_bars[1].accuracy + (16 / 2))
+                        local bonusfactor = math.abs(myx - 320)
+                        if bonusfactor == 0 then
+                            bonusfactor = 1
+                        end
+                        local stretch = (562 - bonusfactor)/562
+                        if bonusfactor <= 12 then
+                            damage = math.round((base_damage * 2.2))
+                        else
+                            damage = math.round(((base_damage * stretch) * 2))
+                        end
+                        bt.enemy[bt.main.fight.sel].hurtanim = 1
+                        bt.main.fight.slash = true
+                        bt.main.fight.draw_slash = true
+                        bt.main.fight.damage = damage
+                        
+                        bt.slash_anim.image_speed = 0.1
+                        bt.slash_anim.image_xscale = (stretch * 2) - 0.5
+                        bt.slash_anim.image_yscale = (stretch * 2) - 0.5
+                        bt.slash_anim.sprite_width = bt.slash_anim.sprite:getWidth()
+                        bt.slash_anim.sprite_height = bt.slash_anim.sprite:getHeight()
+                        bt.slash_anim.x = bt.enemy[bt.main.fight.sel].x + 45
+                        bt.slash_anim.y = bt.enemy[bt.main.fight.sel].y - 5
+                        
+                        love.audio.newSource('assets/sounds/snd_laz.wav', "static"):play()
+                    end
+                    
+                end
+            end
+
+        else
+            if Plus.keyPress == 'x' then
+                bt.main.fight.active = false
+            end
+
+            if Plus.keyPress == 'z' then
+                bt.main.fight.quick_event = true
+                
+                for b = 0, player.weapon.hits -1 do
+                    table.insert(bt.main.fight.bars, {accuracy = -10 -(90 *b), hit = false, speed = player.weapon.hit_speed})
+                end
+            end
+
+            if Plus.keyPress == 'down' then
+                bt.main.fight.sel = bt.main.fight.sel +1
+            end
+
+            if Plus.keyPress == 'up' then
+                bt.main.fight.sel = bt.main.fight.sel -1
+            end
             
+            bt.main.fight.sel = math.max(bt.main.fight.sel, 1)
+            bt.main.fight.sel = math.min(bt.main.fight.sel, #bt.enemy)
         end
-
-        if Plus.keyPress == 'down' then
-            bt.main.fight.sel = bt.main.fight.sel +1
-        end
-
-        if Plus.keyPress == 'up' then
-            bt.main.fight.sel = bt.main.fight.sel -1
-        end
-
-        
-        bt.main.fight.sel = math.max(bt.main.fight.sel, 1)
-        bt.main.fight.sel = math.min(bt.main.fight.sel, #bt.enemy)
 
     elseif bt.main.act.active == true then
 
@@ -375,6 +449,10 @@ function bt.update(dt)
                     if bt.enemy[e].spare == true then
                         play_sound = true
                         bt.enemy[e].been_spared = true
+
+                        local sprite_file = mod_loaded.. 'assets/sprites/enemies/'.. bt.enemy[e].hurt_sprite
+                        enemy_scripts:load_sprite(bt.enemy[e], sprite_file)
+
                         for w = 0, bt.enemy[e].sprite:getWidth() -1 do
                             bt.enemy[e].pixel_data[w] = {}
                             for h = 0, bt.enemy[e].sprite:getHeight() -1 do
@@ -391,6 +469,7 @@ function bt.update(dt)
                         e_off = e_off -1
                     end
                     if play_sound == true then
+                        bt.song:stop()
                         love.audio.newSource('assets/sounds/snd_vaporized.wav', "static"):play()
                     end
                 end
@@ -464,7 +543,10 @@ function bt.update(dt)
 
     if bt.player_dead == false then
         for e = 1, #bt.enemy do
-            bt.enemy[e]:update(dt)
+            if bt.enemy[e] ~= nil then
+                bt.enemy[e]:update(dt)
+                bt.enemy[e]:update_alarms()
+            end
         end
     end
 
@@ -492,7 +574,9 @@ function bt.draw()
 
     end
 
-    draw_box(320 -(bt.box.cur_width/2), 320 -(bt.box.cur_height/2), bt.box.cur_width, bt.box.cur_height, bt.box.border)
+    local box_x = 320 -(bt.box.cur_width/2)
+    local box_y = 320 -(bt.box.cur_height/2)
+    draw_box(box_x, box_y, bt.box.cur_width, bt.box.cur_height, bt.box.border)
 
     font:setFont("8bit.ttf", 6)
     font:draw("HP ", 244, 405)
@@ -543,13 +627,37 @@ function bt.draw()
     end
 
     if bt.main.fight.active == true then
-        for e = 1, #bt.enemy do
-            if bt.enemy[e].spare == true then love.graphics.setColor(255, 255, 0, 1) end
-            font:draw("* "..bt.enemy[e].name, 52 +48, 270 +((e -1) *32))
-            love.graphics.setColor(255, 255, 255, 1)
-            if bt.main.fight.sel == e then
-                sprite = love.graphics.newImage(bt.soul.sprite)
-                love.graphics.draw(sprite, 52 +24-9, 277 +((e -1) *32))
+        if bt.main.fight.quick_event == true then
+            if bt.main.fight.slash == false then
+
+                local target = love.graphics.newImage('assets/sprites/ui/battle/spr_target.png')
+                love.graphics.draw(target, box_x +6, box_y +6)
+                for b, bar in ipairs(bt.main.fight.hit_bars) do
+
+                    if bar.display_time > 0 then
+                        sprite = love.graphics.newImage(bt.soul.sprite)
+                        love.graphics.draw(sprite, bar.accuracy, box_y +6)
+                    end
+            
+                end
+                for b, bar in ipairs(bt.main.fight.bars) do
+
+                    if bar.hit == false then
+                        sprite = love.graphics.newImage(bt.soul.sprite)
+                        love.graphics.draw(sprite, bar.accuracy, box_y +6)
+                    end
+            
+                end
+            end
+        else
+            for e = 1, #bt.enemy do
+                if bt.enemy[e].spare == true then love.graphics.setColor(255, 255, 0, 1) end
+                font:draw("* "..bt.enemy[e].name, 52 +48, 270 +((e -1) *32))
+                love.graphics.setColor(255, 255, 255, 1)
+                if bt.main.fight.sel == e then
+                    sprite = love.graphics.newImage(bt.soul.sprite)
+                    love.graphics.draw(sprite, 52 +24-9, 277 +((e -1) *32))
+                end
             end
         end
     elseif bt.main.act.active == true then
@@ -666,6 +774,20 @@ function bt.draw()
         love.graphics.draw(love.graphics.newImage(bt.soul.sprite), bt.soul.x, bt.soul.y)
     end
 
+    if bt.main.fight.active == true and bt.main.fight.quick_event == true and bt.main.fight.draw_slash == true then
+        bt.slash_anim.frame = bt.slash_anim.frame +bt.slash_anim.image_speed
+        local sprite_file = bt.slash_anim.spritefile ..'_'..math.floor(bt.slash_anim.frame) ..'.png'
+        if not love.filesystem.getInfo(sprite_file) then
+            bt.main.fight.draw_slash = false
+        end
+        if bt.main.fight.draw_slash == true then
+            bt.slash_anim.sprite = love.graphics.newImage(sprite_file)
+            love.graphics.scale(1.5, 1.5)
+            love.graphics.draw(bt.slash_anim.sprite, bt.slash_anim.x/(1.5) -5, bt.slash_anim.y/(1.5 *1.5))
+            love.graphics.scale(1, 1)
+        end
+    end
+
     if love.window.getFullscreen() == true then
 
         local width, height = love.window.getDesktopDimensions()
@@ -679,6 +801,8 @@ function bt.draw()
         love.graphics.setColor(1, 1, 1, 1)
 
     end
+
+    --font:draw(bt.enemy[1].stats.hp ..'/'..bt.enemy[1].stats.maxhp, 320, 0)
 
 end
 
@@ -715,6 +839,17 @@ function bt:start_waves()
 
     bt.main.fight.active = false
     bt.main.fight.sel = 0
+    bt.main.fight.quick_event = false
+    bt.main.fight.bars = {}
+    bt.main.fight.hit_bars = {}
+    bt.main.fight.slash = false
+    bt.main.fight.damage = 0
+    bt.main.fight.damagetimer = 0
+    bt.main.fight.draw_slash = false
+
+    bt.slash_anim.frame = 0
+    bt.slash_anim.spritefile = 'assets/sprites/ui/battle/spr_strike/spr_strike'
+    bt.slash_anim.sprite = love.graphics.newImage(bt.slash_anim.spritefile ..'_' ..bt.slash_anim.frame ..'.png')
 
     bt.main.act.active = false
     bt.main.act.sel = 1
@@ -749,6 +884,17 @@ function bt:checkVictory()
 
         bt.main.fight.active = false
         bt.main.fight.sel = 0
+        bt.main.fight.quick_event = false
+        bt.main.fight.bars = {}
+        bt.main.fight.hit_bars = {}
+        bt.main.fight.slash = false
+        bt.main.fight.damage = 0
+        bt.main.fight.damagetimer = 0
+        bt.main.fight.draw_slash = false
+    
+        bt.slash_anim.frame = 0
+        bt.slash_anim.spritefile = 'assets/sprites/ui/battle/spr_strike/spr_strike'
+        bt.slash_anim.sprite = love.graphics.newImage(bt.slash_anim.spritefile ..'_' ..bt.slash_anim.frame ..'.png')
 
         bt.main.act.active = false
         bt.main.act.sel = 1
@@ -777,6 +923,7 @@ function bt:checkVictory()
         for e, enemy in ipairs(bt.dead_enemy) do
             gold = gold +enemy.stats.gold
             exp = exp +enemy.stats.xp
+            area_killed[area] = area_killed[area] +1
         end
 
         player.gold = player.gold +gold

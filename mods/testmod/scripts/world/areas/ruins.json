@@ -1,4 +1,5 @@
 {
     "rooms" : ["Ruins01", "Ruins03", "RuinsTestMap"],
-    "music" : "mus_ruins.ogg"
+    "music" : "mus_ruins.ogg",
+    "population" : 20
 }

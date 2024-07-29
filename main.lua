@@ -1,8 +1,18 @@
 Plus = {}
 math.randomseed(os.time())
 
+--region Global Scripts
 json = require 'engine.libraries.json'
+font = require 'engine/scripts/font'
+assets = require 'engine.scripts.assets'
+input = require 'engine/scripts/input'
+writer = require 'engine.scripts.text_writer'
+map_sprite = require 'engine.scripts.map_sprite'
+instance = require 'engine.scripts.object'
+cutscene = require 'engine.scripts.cutscene'
+--endregion
 
+--region Global Functions
 function table.shuffle(list)
     for i = #list, 2, -1 do
         local j = math.random(i)
@@ -40,6 +50,8 @@ function moveToPoint(id, speed, x, y)
 end
 
 function math.clamp(val, min, max) return math.min(math.max(val, min), max) end
+
+function math.round(num) return math.floor(num +0.5) end
 
 function draw_box(x, y, width, height, border)
 
@@ -81,11 +93,14 @@ function load_enemy(name)
     return require(enemy_list .. name)
 end
 
+--endregion
+
 Plus.States = {
     mod_hub = "engine/mod_loader",
     title = "engine/mainmenu",
     game = "engine/game",
-    battle = "engine/battle"
+    battle = "engine/battle",
+    but_nobody_came = "engine/alone_battle"
 }
 Plus.LoadedState = nil
 game_time = 0

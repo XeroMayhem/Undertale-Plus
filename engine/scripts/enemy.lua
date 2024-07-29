@@ -3,6 +3,8 @@ local sprite_path = mod_loaded.. 'assets/sprites/enemies/'
 local bullet_sprite_path = mod_loaded.. 'assets/sprites/bullets/'
 
 function enemy:create(name, sprite, pos, hurt_sprite)
+
+    hurt_sprite = defaultValue(hurt_sprite, sprite)
     local id = {}
     local esprite = sprite
     local exsprite = sprite
@@ -40,13 +42,49 @@ function enemy:create(name, sprite, pos, hurt_sprite)
         yscale = 1,
         rot = 0,
         acts = {'Check'},
-        spare = false,
+        spare = true, --false,
         been_spared = false,
         wave = -1,
         waves = {},
         waves_random = true,
         bullets = {},
-        rig = {}
+        rig = {},
+        hurtanim = 0,
+        shudder = 0,
+        alarm = {
+            {time = -1, func = function ()
+                local fin = false
+                id.x = id.x +id.shudder
+                if id.shudder < 0 then
+                    id.shudder = -(id.shudder + 2)
+                else
+                    id.shudder = (-id.shudder)
+                end
+                if id.shudder == 0 then
+                    id.hurtanim = 2
+                    fin = true
+                end
+                if fin == false then
+                    id.alarm[1].time = 2
+                end
+            end},
+            {time = -1, func = function ()
+                love.audio.newSource('assets/sounds/snd_ehurt1.wav', "static"):play()
+            end},
+            {time = -1, func = function ()
+                bt:start_waves()
+            end},
+            {time = -1, func = function ()
+                love.audio.newSource('assets/sounds/snd_vaporized.wav', "static"):play()
+                table.insert(bt.dead_enemy, bt.enemy[bt.main.fight.sel])
+                table.remove(bt.enemy, bt.main.fight.sel)
+                if bt:checkVictory() == false then
+                    bt:start_waves()
+                else
+                    bt.song:stop()
+                end
+            end}
+        }
     }
     id.x = pos -id.sprite:getWidth()/2
     id.y = 246 -id.sprite:getHeight()
@@ -79,10 +117,41 @@ function enemy:create(name, sprite, pos, hurt_sprite)
 
     end
 
-    function id:hurt()
-        
-        sprite_file = mod_loaded.. 'assets/sprites/enemies/'.. id.hurt_sprite ..'.png'
-        enemy_scripts:load_sprite(id, sprite_file)
+    function id:hurt(damage)
+
+        if id.hurtanim == 1 then
+            if love.filesystem.getInfo(sprite_path.. id.sprite_id).type == 'directory' then
+                enemy_scripts:load_sprite(id, sprite_path.. id.sprite_id  ..'/' ..id.sprite_id ..'_' ..id.frame ..'.png')
+            else
+                enemy_scripts:load_sprite(id, sprite_path.. id.hurt_sprite)
+            end
+
+            love.audio.newSource('assets/sounds/snd_damage.wav', "static"):play()
+            id.alarm[2].time = 11
+
+            id.shudder = 8
+            id.alarm[1].time = 1
+            id.hurtanim = 3
+        end
+
+        if id.hurtanim == 2 then
+            
+            id.stats.hp = id.stats.hp -damage
+            if id.stats.hp > 0 then
+                id.alarm[3].time = 15
+                id.frame = 0
+                id.sprite_id = sprite
+                if love.filesystem.getInfo(sprite_path.. id.sprite_id).type == 'directory' then
+                    enemy_scripts:load_sprite(id, sprite_path.. id.sprite_id  ..'/' ..id.sprite_id ..'_' ..id.frame ..'.png')
+                else
+                    enemy_scripts:load_sprite(id, sprite_path.. id.sprite_id)
+                end
+                id.hurtanim = 0
+            else
+                id.hurtanim = 0
+                id.alarm[4].time = 15
+            end
+        end
 
     end
 
@@ -213,6 +282,18 @@ function enemy:create(name, sprite, pos, hurt_sprite)
 
     function id:update(dt)
         return nil
+    end
+
+    function id:update_alarms()
+        for a, alarm in ipairs(id.alarm) do
+            if alarm.time > -1 then
+                alarm.time = alarm.time -1
+                
+                if alarm.time == 0 then
+                    alarm.func()
+                end
+            end
+        end
     end
 
     return id

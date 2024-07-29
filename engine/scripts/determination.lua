@@ -25,6 +25,7 @@ function dt:save()
 
         --world
         data.room = room
+        data.area_killed = area_killed
 
         --inventory
         data.inventory = {}
@@ -41,9 +42,6 @@ function dt:save()
         file:write(json.encode(data))
     end
     file:close()
-    print("Saved to ".. filename.." successfully!")
-    
-    print("----------------   "..Plus.loaded_mod)
 
 end
 
@@ -54,6 +52,7 @@ function dt:load()
         local save_data = json.decode(love.filesystem.read(filename))
         
         room = save_data.room
+        area_killed = save_data.area_killed
         reset_world()
         require('engine/scripts/transition'):transition(nil, room)
 
@@ -81,10 +80,7 @@ function dt:load()
             inventory:addItem(item)
         end
 
-        print("Loaded from ".. filename.." successfully!")
     end
-
-    print("----------------   "..Plus.loaded_mod)
 
 end
 

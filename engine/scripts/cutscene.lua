@@ -2,6 +2,7 @@ local cutscene = {}
 cutscene.scenes = {}
 cutscene.act = 1
 cutscene.timer = 0
+cutscene.text_count = 0
 
 function cutscene:custom_function(func)
     table.insert(cutscene.scenes, func)
@@ -12,6 +13,21 @@ function cutscene:play_sound(filename)
         local sfx = love.audio.newSource(filename, "static")
         sfx:play()
         cutscene.act = cutscene.act +1
+    end)
+
+end
+
+function cutscene:text(text, sound, portrait, pos)
+    cutscene:custom_function(function ()
+        if cutscene.text_count == 0 then
+            Textbox:create()
+            Textbox:pageParams(text, sound, portrait, pos)
+            cutscene.text_count = 1
+        end
+        if Textbox.isActive == false and cutscene.text_count == 1 then
+            cutscene.text_count = 0
+            cutscene.act = cutscene.act +1
+        end
     end)
 
 end

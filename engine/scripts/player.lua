@@ -27,7 +27,7 @@ function player:load()
     player.animations.right = 'assets/sprites/player/walk/right'
     player.animations.up = 'assets/sprites/player/walk/up'
 
-    player.encounter_start = 100
+    player.encounter_start = 1000
     player.encounter_end = 20
     player.encounter_chance = player.encounter_start
 
@@ -61,10 +61,10 @@ function player:load()
     end
 
     player.name = charname
-    player.hp = 1
-    player.hpmax = 20--32
-    player.at = 10--32
-    player.df = 10--32
+    player.hp = 20
+    player.hpmax = 20
+    player.at = 210
+    player.df = 10
     player.weapon = nil
     inventory:setWeapon(mod_data.start_weapon)
     player.armor = nil
@@ -159,13 +159,14 @@ function player:update(dt)
         if can_encounter and Plus.state ~= 'battle' then
             
             if math.random(player.encounter_chance) == 1 then
-                --random_encounter()
+                random_encounter()
                 player.encounter_chance = player.encounter_start
 			else
-                local area_population = 20
-                local area_killed = 0
-                if area_population - area_killed > 0 then
-                    local populationfactor = (area_population -area_killed)/area_population
+                if area_data.population - area_killed[area] > 0 then
+                    local populationfactor = area_data.population/(area_data.population -area_killed[area])--(area_data.population -area_killed[area])/area_data.population
+                    if populationfactor > 8 then
+                        populationfactor = 8
+                    end
                     player.encounter_chance = player.encounter_chance -populationfactor
                 else
                     player.encounter_chance = player.encounter_chance -1

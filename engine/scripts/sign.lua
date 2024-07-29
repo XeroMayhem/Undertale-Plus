@@ -1,4 +1,4 @@
-local SignEvent, super = setmetatable(Event, {__index = "sign"})
+local SignEvent = {}
 
 function SignEvent:onInteract()
     local text = gameMap:getObjectProperties("Objects", "sign").text

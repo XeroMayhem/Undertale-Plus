@@ -46,8 +46,6 @@ local function key_load()
 
     end)
 
-    input:keypress('space', random_encounter)
-
 end
 
 function start_battle()
@@ -68,10 +66,23 @@ function start_encounter(x, y, soul)
     curEncounter = require('engine.scripts.encounter')(x, y, soul)
     isEncounter = true
     playerFree = false
+    bgMusic:stop()
 end
 
 function random_encounter()
-    start_encounter()
+    local enemy_list = love.filesystem.getDirectoryItems('mods/'.. Plus.loaded_mod..'/scripts/battle/enemies')
+    for i = 1, #enemy_list do
+        local name = 'mods/'.. Plus.loaded_mod..'/scripts/battle/enemies/' ..enemy_list[i]
+        name = name:sub(1, #name -4)
+        package.loaded[name] = nil
+    end
+    print(area_killed[area], area_data.population)
+    if area_killed[area] >= area_data.population then
+        Plus:reloadState('but_nobody_came')
+    else
+        Plus:reloadState('battle')
+    end
+    bgMusic:stop()
 end
 
 function load_map()
@@ -185,13 +196,8 @@ function game.update(dt)
     if game.loaded == false then 
 
         game.loaded = true
-    
-        love.audio.setVolume(1)
-    
-        json = require 'engine.libraries.json'
         
-        --load mods
-    
+        --load mode
         flag = {}
         for i = 1, mod_data.flag_count do
             table.insert(flag, 0)
@@ -200,14 +206,7 @@ function game.update(dt)
         cell = require(mod_loaded ..'scripts/data/cell/cell')
         cell:init()
     
-        Event = require 'engine.scripts.events'
-        
-        map_sprite = require 'engine.scripts.map_sprite'
-        instance = require 'engine.scripts.object'
-    
-        input = require 'engine/scripts/input'
         key_load()
-        font = require 'engine/scripts/font'
 
         SaveMenu = require 'engine/scripts/save_menu'
         SaveMenu:init()
@@ -224,6 +223,7 @@ function game.update(dt)
         curTransition = nil
         
         can_encounter = true
+        area_killed = {}
         
         overworld_menu = require 'engine/scripts/overworld_menu'
         overworld_menu:init()
@@ -249,10 +249,14 @@ function game.update(dt)
     
         cutsceneActive = false
         cutsceneReady = true
-        cutscene = require 'engine.scripts.cutscene'
 
         area = mod_data.area
         area_data = json.decode(love.filesystem.read(mod_loaded ..'scripts/world/areas/' ..area ..'.json'))
+        area_killed = {}
+        local area_list = love.filesystem.getDirectoryItems(mod_loaded ..'scripts/world/areas/')
+        for a, area in ipairs(area_list) do
+            area_killed[area:sub(1, #area -5)] = 0
+        end
     
         bgMusic = love.audio.newSource(mod_loaded ..'assets/music/' ..area_data.music, "stream")
         bgMusic:setLooping(true)
@@ -459,6 +463,8 @@ function game.draw()
         love.graphics.setColor(1, 1, 1, 1)
 
     end
+
+    print(area_killed[area])
 
 end
 

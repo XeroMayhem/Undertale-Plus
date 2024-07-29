@@ -1,4 +1,4 @@
-local froggit = enemy_scripts:create("Froggit", 'spr_froggit.png', 640/3)
+local froggit = enemy_scripts:create("Froggit", 'spr_froggit.png', 640/3, 'spr_froggit_hurt.png')
 froggit.acts = {'Check', 'Bark', 'Croak', 'Insult'}
 froggit.waves = {'basic_1', 'basic_2', 'basic_1', 'basic_2', 'basic_1', 'basic_2', 'basic_1', 'basic_2', 'basic_1', 'basic_2'}
 

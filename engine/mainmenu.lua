@@ -1,7 +1,3 @@
-local input = require 'engine/scripts/input'
-local font = require 'engine/scripts/font'
-
-
 local menu = {}
 menu.part = 1
 menu.sel = 1

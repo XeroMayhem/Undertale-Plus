@@ -1,4 +1,4 @@
-local whimsalot = enemy_scripts:create('Whimsalot', 'spr_whimsalot_head', (640/3 *1), 'spr_whimsalot_head_hurt')
+local whimsalot = enemy_scripts:create('Whimsalot', 'spr_whimsalot_head', (640/3 *1), 'spr_whimsalot_head_hurt.png')
 whimsalot.rig_only = true
 whimsalot.xscale = 2
 whimsalot.yscale = 2
