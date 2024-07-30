@@ -149,13 +149,13 @@ function bt.update(dt)
                         end
                     end
                 end
-
+                
                 if #bt.main.fight.bars == #bt.main.fight.hit_bars + #bt.main.fight.missed_bars then
                     local enemy = bt.enemy[bt.main.fight.sel]
-                    local base_damage = ((player.at +player.weapon.power) +(math.random() +math.random()) -enemy.stats.df)
+                    local base_damage = ((player.at +player.weapon.power) -enemy.stats.df)
                     local damage = 0
                     if #bt.main.fight.hit_bars == 1 then
-                        local myx = (bt.main.fight.hit_bars[1].accuracy + (16 / 2))
+                        local myx = (bt.main.fight.hit_bars[1].accuracy + (14 / 2))
                         local bonusfactor = math.abs(myx - 320)
                         if bonusfactor == 0 then
                             bonusfactor = 1
@@ -166,6 +166,28 @@ function bt.update(dt)
                         else
                             damage = math.round(((base_damage * stretch) * 2))
                         end
+                        bt.enemy[bt.main.fight.sel].hurtanim = 1
+                        bt.main.fight.slash = true
+                        bt.main.fight.draw_slash = true
+                        bt.main.fight.damage = damage
+                        
+                        bt.slash_anim.image_speed = 0.1
+                        bt.slash_anim.image_xscale = (stretch * 2) - 0.5
+                        bt.slash_anim.image_yscale = (stretch * 2) - 0.5
+                        bt.slash_anim.sprite_width = bt.slash_anim.sprite:getWidth()
+                        bt.slash_anim.sprite_height = bt.slash_anim.sprite:getHeight()
+                        bt.slash_anim.x = bt.enemy[bt.main.fight.sel].x + 45
+                        bt.slash_anim.y = bt.enemy[bt.main.fight.sel].y - 5
+                        
+                        love.audio.newSource('assets/sounds/snd_laz.wav', "static"):play()
+                    elseif #bt.main.fight.hit_bars > 1 then
+                        local myx = (bt.main.fight.hit_bars[1].accuracy + (14 / 2))
+                        local bonusfactor = math.abs(myx - 320)
+                        if bonusfactor == 0 then
+                            bonusfactor = 1
+                        end
+                        local stretch = (562 - bonusfactor)/562
+                        damage = math.round((base_damage *(160/160)) *(4/#bt.main.fight.bars)+(math.random() +math.random()))
                         bt.enemy[bt.main.fight.sel].hurtanim = 1
                         bt.main.fight.slash = true
                         bt.main.fight.draw_slash = true
@@ -631,20 +653,21 @@ function bt.draw()
             if bt.main.fight.slash == false then
 
                 local target = love.graphics.newImage('assets/sprites/ui/battle/spr_target.png')
+                local targetchoice = 'assets/sprites/ui/battle/spr_targetchoice/'
                 love.graphics.draw(target, box_x +6, box_y +6)
-                for b, bar in ipairs(bt.main.fight.hit_bars) do
-
-                    if bar.display_time > 0 then
-                        sprite = love.graphics.newImage(bt.soul.sprite)
-                        love.graphics.draw(sprite, bar.accuracy, box_y +6)
-                    end
-            
-                end
+                
+                local chosen_bar = false
                 for b, bar in ipairs(bt.main.fight.bars) do
 
                     if bar.hit == false then
-                        sprite = love.graphics.newImage(bt.soul.sprite)
-                        love.graphics.draw(sprite, bar.accuracy, box_y +6)
+                        local sprite = love.graphics.newImage(targetchoice ..'spr_targetchoice_1.png')
+                        if bt.main.fight.bars[b].hit == false then
+                            if chosen_bar == false then
+                                sprite = love.graphics.newImage(targetchoice ..'spr_targetchoice_0.png')
+                                chosen_bar = true
+                            end
+                            love.graphics.draw(sprite, bar.accuracy, box_y +6)
+                        end
                     end
             
                 end

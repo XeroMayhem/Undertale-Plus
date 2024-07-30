@@ -1,6 +1,6 @@
 local loader = {}
 loader.options = {{name = "Play a mod", active = false}, {name = "Open Mods Folder", active = false},
-    {name = "Options", active = false}, {name = "Credits", active = false},
+    {name = "Options", active = false}, {name = "Credits" , active = false},
     {name = "Open wiki", active = false}, {name = "Quit", active = false}}
 loader.optionSel = 1
 
@@ -21,7 +21,6 @@ input:keypress('z', function()
                 if loader.selectMod == true then
                     Plus.keyPress = ''
                     Plus.lastKey = ''
-                    print("Loaded ".. Plus.loaded_mod.." successfully!")
                     mod_loaded = 'mods/'.. Plus.loaded_mod..'/'
                     mod_data = json.decode(love.filesystem.read(mod_loaded .."data.json"))
                     love.window.setTitle(mod_data.name)
@@ -31,7 +30,7 @@ input:keypress('z', function()
         elseif loader.optionSel == 2 then
             love.system.openURL("file://" ..love.filesystem.getSaveDirectory()..'/mods')
         elseif loader.optionSel == 5 then
-            love.system.openURL("https://undertale.com/")
+            love.system.openURL("https://xeromayhem.github.io/UndertalePlus/")
         end
 
     end

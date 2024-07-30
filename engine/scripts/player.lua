@@ -63,7 +63,7 @@ function player:load()
     player.name = charname
     player.hp = 20
     player.hpmax = 20
-    player.at = 210
+    player.at = 10
     player.df = 10
     player.weapon = nil
     inventory:setWeapon(mod_data.start_weapon)

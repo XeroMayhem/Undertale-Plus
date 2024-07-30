@@ -1,19 +1,8 @@
-local SqueakEvent = {}
-
-function SqueakEvent:init()
-    local sfx = love.audio.newSource(mod_loaded ..'assets/sounds/snd_hero.wav', "static")
-    sfx:play()
-    cutsceneActive = false
+return function(cutscene)
+    cutscene:play_sound(mod_loaded ..'assets/sounds/snd_hero.wav')
+    cutscene:wait(60)
+    cutscene:text("* Hi there!", nil, nil, 1)
+    cutscene:text("* How's your day.")
+    cutscene:wait(120)
+    cutscene:text("* Cool.")
 end
-
--- Update gets called every frame
-function SqueakEvent:update()
-
-end
-
-function SqueakEvent:draw()
-
-end
-
-
-return SqueakEvent

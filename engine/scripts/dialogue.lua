@@ -55,6 +55,7 @@ function dialogue:init()
 end
 
 function dialogue:create()
+    can_encounter = false
     playerFree = false
     dialogue.isActive = true
     dialogue.text = {}--{"* This is the 1st page!", "* This is the 2nd page!", "* This is the 3rd page!^* LINE BREAK LETS GO!!!!!!!"}
@@ -206,7 +207,11 @@ function dialogue:update()
         dialogue.soundCount = dialogue.soundCount +1
         if dialogue.soundCount >= dialogue.soundOffset then
             dialogue.soundCount = 0
-            love.audio.newSource(mod_loaded ..'assets/sounds/'.. dialogue.sound[dialogue.page], "static"):play()
+            if dialogue.sound[dialogue.page] == 'snd_text.wav' then
+                love.audio.newSource('assets/sounds/snd_text.wav', "static"):play()
+            else
+                love.audio.newSource(mod_loaded ..'assets/sounds/'.. dialogue.sound[dialogue.page], "static"):play()
+            end
         end
     end
 
@@ -223,12 +228,6 @@ function dialogue:update()
 end
 
 function dialogue:draw()
-    --[[
-    love.graphics.rectangle("fill", dialogue.boxX, (dialogue.boxY +dialogue.offY), dialogue.boxWidth *gameScale, dialogue.boxHeight *gameScale)
-    love.graphics.setColor(0, 0, 0)
-    love.graphics.rectangle("fill", dialogue.boxX +(3 *gameScale), (dialogue.boxY +dialogue.offY) +(3 *gameScale), (dialogue.boxWidth -6) *gameScale, (dialogue.boxHeight -6) *gameScale)
-    love.graphics.setColor(255, 255, 255)
-    ]]
     draw_box(dialogue.boxX, (dialogue.boxY +dialogue.offY), dialogue.boxWidth *gameScale, dialogue.boxHeight *gameScale)
 
     font:setFont("main.ttf", 16)
@@ -266,6 +265,7 @@ function dialogue:destroy()
     dialogue.isActive = false
     dialogue.setup = false
     playerFree = true
+    can_encounter = true
     if overworld_menu.active == true then
         overworld_menu:destroy()
     end

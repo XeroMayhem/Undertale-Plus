@@ -76,7 +76,6 @@ function random_encounter()
         name = name:sub(1, #name -4)
         package.loaded[name] = nil
     end
-    print(area_killed[area], area_data.population)
     if area_killed[area] >= area_data.population then
         Plus:reloadState('but_nobody_came')
     else
@@ -463,8 +462,6 @@ function game.draw()
         love.graphics.setColor(1, 1, 1, 1)
 
     end
-
-    print(area_killed[area])
 
 end
 

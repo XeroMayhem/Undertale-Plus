@@ -1,0 +1,11 @@
+{
+    "name" : "Example Mod",
+    "map" : "Ruins02",
+    "area" : "ruins",
+    "has_cell" : false,
+    "flag_count" : 2,
+    "chara_name" : "",
+    "start_weapon" : "toy_gun",
+    "start_armor" : "bandana",
+    "creator_tag" : "UNDERTALE+ v0.1 XeroMayhem 2024"
+}

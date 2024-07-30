@@ -1,0 +1,5 @@
+{
+    "rooms" : ["Ruins01", "Ruins02"],
+    "music" : "mus_ruins.ogg",
+    "population" : 20
+}

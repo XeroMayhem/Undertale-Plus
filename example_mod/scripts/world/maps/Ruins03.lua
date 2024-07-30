@@ -10,7 +10,7 @@ return {
   tilewidth = 20,
   tileheight = 20,
   nextlayerid = 9,
-  nextobjectid = 20,
+  nextobjectid = 22,
   properties = {},
   tilesets = {
     {
@@ -238,11 +238,11 @@ return {
       properties = {},
       encoding = "lua",
       data = {
-        16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        16, 0, 0, 0, 0, 0, 87, 0, 87, 0, 0, 0, 0, 0, 87, 0,
+        16, 0, 0, 0, 0, 0, 87, 0, 87, 0, 0, 0, 87, 0, 87, 0,
+        16, 0, 0, 0, 0, 0, 87, 0, 0, 0, 93, 94, 95, 96, 0, 0,
+        16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 94, 95, 96, 0, 0,
+        16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 95, 96, 0, 0,
         16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -298,7 +298,7 @@ return {
           shape = "rectangle",
           x = 200,
           y = 80,
-          width = 20,
+          width = 60,
           height = 20,
           rotation = 0,
           visible = true,
@@ -423,7 +423,7 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["map"] = "Ruins01",
+            ["map"] = "Ruins02",
             ["marker"] = "up_entry"
           }
         },
@@ -439,6 +439,21 @@ return {
           rotation = 0,
           visible = true,
           properties = {}
+        },
+        {
+          id = 21,
+          name = "sign",
+          type = "",
+          shape = "rectangle",
+          x = 220,
+          y = 80,
+          width = 40,
+          height = 20,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["text"] = "\"* Vines block the path\""
+          }
         }
       }
     },
