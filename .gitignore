@@ -1,0 +1,4 @@
+.vscode/
+
+mods/*
+!mods/testmod/
